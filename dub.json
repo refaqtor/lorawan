@@ -12,13 +12,13 @@
   "targetType": "library",
   "subPackages": [
     {
-      "name": "tests",
+      "name": "test",
       "targetName": "lorawan-test",
       "description": "Tests for lorawan",
       "targetType": "executable",
       "buildOptions": ["unittests", "coverage"],
-      "mainSourceFile": "tests/main.d",
-      "sourcePaths": ["./source/", "./tests/"]
+      "mainSourceFile": "test/main.d",
+      "sourcePaths": ["./source/", "./test/"]
     }
   ]
 }
