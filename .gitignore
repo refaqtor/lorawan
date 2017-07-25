@@ -10,3 +10,5 @@ __test__*__
 # Executable and libs
 lorawan-*
 *.a
+.idea
+lorawan.iml
