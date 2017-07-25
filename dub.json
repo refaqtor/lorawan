@@ -1,0 +1,24 @@
+{
+  "name": "lorawan",
+  "description": "Library supporting work on the loravan protocol in the d language",
+  "copyright": "Copyright © 2017, LLC CERERIS",
+  "license": "MIT",
+  "homepage": "www.cereris.org",
+  "authors": [
+    "LLC CERERIS"
+  ],
+  "sourcePaths": ["./source"],
+  "targetName": "lorawan",
+  "targetType": "library",
+  "subPackages": [
+    {
+      "name": "tests",
+      "targetName": "lorawan-test",
+      "description": "Tests for lorawan",
+      "targetType": "executable",
+      "buildOptions": ["unittests", "coverage"],
+      "mainSourceFile": "tests/main.d",
+      "sourcePaths": ["./source/", "./tests/"]
+    }
+  ]
+}
