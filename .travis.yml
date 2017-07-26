@@ -12,8 +12,8 @@ script:
   - dscanner --styleCheck source
   - dscanner --syntaxCheck source
   - dscanner --sloc source
-  - dub run lorawan:tests
-  - rm tests*.lst
+  - dub run lorawan:test
+  - rm test*.lst
   - ./doveralls
   - dub build --build=ddox
 deploy:
