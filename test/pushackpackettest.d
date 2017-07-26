@@ -1,4 +1,4 @@
-module lorawan.test.arrayfrompushackpackettest;
+module lorawan.test.pushackpackettest;
 
 import lorawan.gateway.pushackpacket;
 import lorawan.gateway.abstractpacket;
@@ -18,7 +18,7 @@ unittest
   pushAckPacket.setToken(randomToken);
   pushAckPacket.setPacketType(PacketType.PUSH_ACK);
   
-  ubyte[] pushAckArray = pushAckPacket.getProtocolVersion ~ pushAckPacket.getToken ~ pushAckPacket.getPacketType;
+  ubyte[] pushAckArray = ProtocolVersion.VERSION_2 ~ randomToken ~ PacketType.PUSH_ACK;
   
   assert(pushAckPacket.toByteArray == pushAckArray);
 }

@@ -9,7 +9,7 @@ module lorawan.gateway.pushackpacket;
 import lorawan.gateway.abstractpacket;
 import lorawan.gateway.lorawantypes;
 
-/// The class corresponding to the PUSH_ACK packet
+/// The class represending the PUSH_ACK packet
 class PushAckPacket : AbstractPacket
 {
   public:

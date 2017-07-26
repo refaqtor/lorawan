@@ -12,7 +12,7 @@ import lorawan.gateway.lorawantypes;
 abstract class AbstractPacket
 {
   public:
-    /// Converts the packet type to an array of bytes
+    /// Converts the packet to an array of bytes
     ubyte[] toByteArray();
     
     final ProtocolVersion getProtocolVersion(){ return _protocolVersion; }
