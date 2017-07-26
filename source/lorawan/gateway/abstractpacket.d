@@ -16,13 +16,13 @@ abstract class AbstractPacket
     ubyte[] toByteArray();
     
     final ProtocolVersion getProtocolVersion(){ return _protocolVersion; }
-    final void setProtocolVersion(ProtocolVersion protocolVersion){ _protocolVersion = protocolVersion; }
+    final AbstractPacket setProtocolVersion(ProtocolVersion protocolVersion){ _protocolVersion = protocolVersion; return this;}
     
     final ubyte[2] getToken(){ return _token; }
-    final void setToken(ubyte[2] token){ _token = token; }
+    final AbstractPacket setToken(ubyte[2] token){ _token = token; return this; }
     
     final PacketType getPacketType(){ return _packetType; }
-    final void setPacketType(PacketType packetType){ _packetType = packetType;}
+    final AbstractPacket setPacketType(PacketType packetType){ _packetType = packetType; return this; }
     
   protected:
     /// Protocol version between Lora gateway and server
