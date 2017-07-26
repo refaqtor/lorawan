@@ -10,9 +10,9 @@ unittest{
   
   ubyte[2] randomToken = [uniform!ubyte, uniform!ubyte];
   
-  pushAckPAcket.setProtocolVersion(PROTOCOL_VERSION_2);
+  pushAckPAcket.setProtocolVersion(ProtocolVersion.VERSION_2);
   pushAckPAcket.setToken(randomToken);
-  pushAckPAcket.setPacketType(PUSH_ACK_PACKET_TYPE);
+  pushAckPAcket.setPacketType(PacketType.PUSH_ACK);
   
   ubyte[] pushAckArray= pushAckPAcket.getProtocolVersion ~ pushAckPAcket.getToken ~ pushAckPAcket.getPacketType;
   

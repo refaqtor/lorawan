@@ -15,20 +15,20 @@ abstract class AbstractPacket
     /// Converts the corresponding packet type to an array of bytes
     ubyte[] toUbyteArray();
     
-    final ubyte getProtocolVersion(){ return _protocolVersion; }
-    final void setProtocolVersion(ubyte protocolVersion){ _protocolVersion = protocolVersion; }
+    final ProtocolVersion getProtocolVersion(){ return _protocolVersion; }
+    final void setProtocolVersion(ProtocolVersion protocolVersion){ _protocolVersion = protocolVersion; }
     
     final ubyte[2] getToken(){ return _token; }
     final void setToken(ubyte[2] token){ _token = token; }
     
-    final ubyte getPacketType(){ return _packetType; }
-    final void setPacketType(ubyte packetType){ _packetType = packetType;}
+    final PacketType getPacketType(){ return _packetType; }
+    final void setPacketType(PacketType packetType){ _packetType = packetType;}
     
   protected:
     /// Protocol version between Lora gateway and server
-    ubyte _protocolVersion;
+    ProtocolVersion _protocolVersion;
     /// Random token to acknowledge
     ubyte[2] _token;
     /// Packet type identifier
-    ubyte _packetType;
+    PacketType _packetType;
 }
