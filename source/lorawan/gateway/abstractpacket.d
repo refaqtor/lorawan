@@ -1,3 +1,9 @@
+/**
+  Copyright: 2017 © LLC CERERIS
+  License: MIT
+  Authors: LLC CERERIS
+*/
+
 module lorawan.gateway.abstractpacket;
 
 import lorawan.gateway.lorawantypes;
