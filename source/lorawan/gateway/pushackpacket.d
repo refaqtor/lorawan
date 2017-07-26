@@ -13,7 +13,7 @@ import lorawan.gateway.lorawantypes;
 class PushAckPacket : AbstractPacket
 {
   public:
-    override ubyte[] toUbyteArray()
+    override ubyte[] toByteArray()
     {
       return _protocolVersion ~ _token ~ _packetType;
     }

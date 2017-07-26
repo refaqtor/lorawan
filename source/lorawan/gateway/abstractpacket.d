@@ -12,8 +12,8 @@ import lorawan.gateway.lorawantypes;
 abstract class AbstractPacket
 {
   public:
-    /// Converts the corresponding packet type to an array of bytes
-    ubyte[] toUbyteArray();
+    /// Converts the packet type to an array of bytes
+    ubyte[] toByteArray();
     
     final ProtocolVersion getProtocolVersion(){ return _protocolVersion; }
     final void setProtocolVersion(ProtocolVersion protocolVersion){ _protocolVersion = protocolVersion; }
