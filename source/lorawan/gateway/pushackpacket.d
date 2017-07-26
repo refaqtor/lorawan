@@ -13,6 +13,11 @@ import lorawan.gateway.lorawantypes;
 class PushAckPacket : AbstractPacket
 {
   public:
+    this(ubyte[2] token = [0, 0], ProtocolVersion protocolVersion = ProtocolVersion.VERSION_2)
+    {
+      super(protocolVersion, PacketType.PUSH_ACK, token);
+    }
+  
     override ubyte[] toByteArray()
     {
       return _protocolVersion ~ _token ~ _packetType;
