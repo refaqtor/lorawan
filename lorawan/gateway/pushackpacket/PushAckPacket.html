@@ -1,0 +1,35 @@
+<!DOCTYPE html><html><head>
+<meta charset="UTF-8"/>
+<title>Class PushAckPacket</title>
+<link rel="stylesheet" type="text/css" href="../../../styles/ddox.css"/>
+<link rel="stylesheet" href="../../../prettify/prettify.css" type="text/css"/>
+<script type="text/javascript" src="../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../scripts/ddox.js">/**/</script></head><body onload="setupDdox();"><nav id="main-nav"><noscript><p style="color: red">The search functionality needs JavaScript enabled</p></noscript><div id="symbolSearchPane" style="display: none"><form action="#" method="GET">
+<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/></form><ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../";
+$('#symbolSearchPane').show();</script></div><ul class="tree-view"><li class="tree-view "><div class="package ">lorawan</div><ul class="tree-view"><li class="tree-view "><div class="package ">gateway</div><ul class="tree-view"><li><div class="module "><a href="../../../lorawan/gateway/abstractpacket.html">abstractpacket</a></div></li><li><div class="module "><a href="../../../lorawan/gateway/lorawantypes.html">lorawantypes</a></div></li><li><div class="module selected"><a href="../../../lorawan/gateway/pushackpacket.html">pushackpacket</a></div></li></ul></li></ul></li></ul></nav><div id="main-contents"><h1>Class PushAckPacket</h1><p>The class represending the PUSH_ACK packet
+</p><div class="prototype"><code class="lang-d"><div class="single-prototype"><span class="kwd">class</span> <span class="typ">PushAckPacket</span>
+<br>&nbsp;&nbsp;: <a href="../../../lorawan/gateway/abstractpacket/AbstractPacket.html"><span class="typ">AbstractPacket</span></a>
+<span class="pun">;</span></div></code></div><section><h2>Constructors</h2><h4>Constructors</h4><table>
+<col class="caption"/>
+<tr><th>Name</th><th>Description</th></tr><tr><td><a href="../../../lorawan/gateway/pushackpacket/PushAckPacket.this.html" class="["public"]"><code>this</code></a></td><td>Used to initialize protocol version, packet type and token.
+</td></tr></table></section><section><h2>Fields</h2><h4>Fields</h4><table>
+<col class="caption"/>
+<tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><a href="../../../lorawan/gateway/abstractpacket/AbstractPacket._packetType.html" class="["protected", "inherited"]"><code>_packetType</code></a></td><td class="typecol"><code class="prettyprint lang-d"><a href="../../../lorawan/gateway/lorawantypes/PacketType.html"><span class="typ">PacketType</span></a></code></td><td>Packet type identifier
+</td></tr><tr><td><a href="../../../lorawan/gateway/abstractpacket/AbstractPacket._protocolVersion.html" class="["protected", "inherited"]"><code>_protocolVersion</code></a></td><td class="typecol"><code class="prettyprint lang-d"><a href="../../../lorawan/gateway/lorawantypes/ProtocolVersion.html"><span class="typ">ProtocolVersion</span></a></code></td><td>Protocol version between Lora gateway and server
+</td></tr><tr><td><a href="../../../lorawan/gateway/abstractpacket/AbstractPacket._token.html" class="["protected", "inherited"]"><code>_token</code></a></td><td class="typecol"><code class="prettyprint lang-d"><span class="typ">ubyte</span><span class="pun">[</span><span class="lit">2</span><span class="pun">]</span></code></td><td>Random token to acknowledge
+</td></tr></table></section><section><h2>Methods</h2><h4>Methods</h4><table>
+<col class="caption"/>
+<tr><th>Name</th><th>Description</th></tr><tr><td><a href="../../../lorawan/gateway/pushackpacket/PushAckPacket.toByteArray.html" class="["public"]"><code>toByteArray</code></a></td><td>Used to converts PUSH_ACK packet to an array of bytes
+</td></tr><tr><td><a href="../../../lorawan/gateway/abstractpacket/AbstractPacket.getPacketType.html" class="["public", "inherited"]"><code>getPacketType</code></a></td><td>Used to get the packet type
+</td></tr><tr><td><a href="../../../lorawan/gateway/abstractpacket/AbstractPacket.getProtocolVersion.html" class="["public", "inherited"]"><code>getProtocolVersion</code></a></td><td>Used to get the protocol version
+</td></tr><tr><td><a href="../../../lorawan/gateway/abstractpacket/AbstractPacket.getToken.html" class="["public", "inherited"]"><code>getToken</code></a></td><td>Used to get the token
+</td></tr><tr><td><a href="../../../lorawan/gateway/abstractpacket/AbstractPacket.setProtocolVersion.html" class="["public", "inherited"]"><code>setProtocolVersion</code></a></td><td>Used to set the protocol version
+</td></tr><tr><td><a href="../../../lorawan/gateway/abstractpacket/AbstractPacket.setToken.html" class="["public", "inherited"]"><code>setToken</code></a></td><td>Used to set the token
+</td></tr></table></section>
+
+<footer><table class="license-info"><tr><th>Authors</th><td><p>LLC CERERIS
+</p>
+</td></tr><tr><th>Copyright</th><td><p>2017 © LLC CERERIS
+</p>
+</td></tr><tr><th>License</th><td><p>MIT
+</p>
+</td></tr></table><p class="faint">Generated using the DDOX documentation generator</p></footer></div></body></html>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url><loc>http://127.0.0.1/index.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket.getPacketType.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket.getProtocolVersion.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket.getToken.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket.setProtocolVersion.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket.setToken.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket.this.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket.toByteArray.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket._packetType.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket._protocolVersion.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket._token.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/lorawantypes.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/lorawantypes/PacketType.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/lorawantypes/PacketType.PUSH_ACK.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/lorawantypes/ProtocolVersion.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/lorawantypes/ProtocolVersion.VERSION_2.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/pushackpacket.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/pushackpacket/PushAckPacket.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/pushackpacket/PushAckPacket.this.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/pushackpacket/PushAckPacket.toByteArray.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket.getPacketType.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket.getProtocolVersion.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket.getToken.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket.setProtocolVersion.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket.setToken.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket._packetType.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket._protocolVersion.html</loc></url>
+<url><loc>http://127.0.0.1/lorawan/gateway/abstractpacket/AbstractPacket._token.html</loc></url>
+</urlset>
