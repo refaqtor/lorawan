@@ -12,7 +12,13 @@ import lorawan.gateway.lorawantypes;
 class AbstractPacket
 {
   public:
-    /// Default constructor
+    /** Used to initialize protocol version, packet type and token.
+    
+      Params:
+        protocolVersion = protocol version between Lora gateway and server.
+        packetType = packet type.
+        token = random token.
+    */
     this(ProtocolVersion protocolVersion, PacketType packetType, ubyte[2] token)
     {
       _protocolVersion = protocolVersion;
@@ -20,28 +26,61 @@ class AbstractPacket
       _token = token;
     }
   
-    /// Converts the packet to an array of bytes
+    /** Used to converts packet to an array of bytes
+    
+      Returns:
+        $(D ubyte[])
+    */
     abstract ubyte[] toByteArray();
     
+    /** Used to get the protocol version
+    
+      Returns:
+        $(D ProtocolVersion)
+    */
     final ProtocolVersion getProtocolVersion(){ return _protocolVersion; }
+    
+    /** Used to set the protocol version
+    
+      Params:
+        protocolVersion = value used to initialize protocol version
+        
+      Returns:
+        $(D AbstractPacket)
+    */
     final AbstractPacket setProtocolVersion(ProtocolVersion protocolVersion)
     { 
       _protocolVersion = protocolVersion;
        return this;
     }
     
+    /** Used to get the token
+    
+      Returns:
+        $(D ubyte[2])
+    */    
     final ubyte[2] getToken(){ return _token; }
+    
+    /** Used to set the token
+    
+      Params:
+        token = value used to initialize token
+        
+      Returns:
+        $(D AbstractPacket)
+    */    
     final AbstractPacket setToken(ubyte[2] token)
     { 
       _token = token; 
       return this; 
     }
     
+    /** Used to get the packet type
+    
+      Returns:
+        $(D PacketType)
+    */        
     final PacketType getPacketType(){ return _packetType; }
-    final AbstractPacket setPacketType(PacketType packetType){
-       _packetType = packetType; 
-       return this; 
-    }
     
   protected:
     /// Protocol version between Lora gateway and server

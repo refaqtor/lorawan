@@ -15,8 +15,7 @@ unittest
   ubyte[2] randomToken = [uniform!ubyte, uniform!ubyte];
   
   pushAckPacket.setProtocolVersion(ProtocolVersion.VERSION_2)
-    .setToken(randomToken)
-    .setPacketType(PacketType.PUSH_ACK);
+    .setToken(randomToken);
   
   ubyte[] pushAckArray = ProtocolVersion.VERSION_2 ~ randomToken ~ PacketType.PUSH_ACK;
   
