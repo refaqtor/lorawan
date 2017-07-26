@@ -28,7 +28,7 @@ abstract class AbstractPacket
     /// Protocol version between Lora gateway and server
     ProtocolVersion _protocolVersion;
     /// Random token to acknowledge
-    ubyte[2] _token;
+    ubyte[2] _token = [0, 0];
     /// Packet type identifier
     PacketType _packetType;
 }
