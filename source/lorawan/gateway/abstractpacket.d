@@ -1,5 +1,7 @@
 module lorawan.gateway.abstractpacket;
 
+import lorawan.gateway.lorawantypes;
+
 /// Abstract class for all types of packets
 abstract class AbstractPacket
 {
@@ -13,8 +15,8 @@ abstract class AbstractPacket
     final ubyte[2] getToken(){ return _token; }
     final void setToken(ubyte[2] token){ _token = token; }
     
-    final ubyte getPacketTypeID(){ return _packetTypeID; }
-    final void setPacketTypeID(ubyte packetTypeID){ _packetTypeID = packetTypeID;}
+    final ubyte getPacketType(){ return _packetType; }
+    final void setPacketType(ubyte packetType){ _packetType = packetType;}
     
   protected:
     /// Protocol version between Lora gateway and server
@@ -22,5 +24,5 @@ abstract class AbstractPacket
     /// Random token to acknowledge
     ubyte[2] _token;
     /// Packet type identifier
-    ubyte _packetTypeID;
+    ubyte _packetType;
 }

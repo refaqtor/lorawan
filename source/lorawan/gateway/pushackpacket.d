@@ -1,6 +1,7 @@
 module lorawan.gateway.pushackpacket;
 
 import lorawan.gateway.abstractpacket;
+import lorawan.gateway.lorawantypes;
 
 /// The class corresponding to the PUSH_ACK packet
 class PushAckPacket : AbstractPacket
@@ -8,6 +9,6 @@ class PushAckPacket : AbstractPacket
   public:
     override ubyte[] toUbyteArray()
     {
-      return _protocolVersion ~ _token ~ _packetTypeID;
+      return _protocolVersion ~ _token ~ _packetType;
     }
 }

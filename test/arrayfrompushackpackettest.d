@@ -2,6 +2,7 @@ module lorawan.test.arrayfrompushackpackettest;
 
 import lorawan.gateway.pushackpacket;
 import lorawan.gateway.abstractpacket;
+import lorawan.gateway.lorawantypes;
 import std.random;
 
 unittest{
@@ -9,11 +10,11 @@ unittest{
   
   ubyte[2] randomToken = [uniform!ubyte, uniform!ubyte];
   
-  pushAckPAcket.setProtocolVersion(2);
+  pushAckPAcket.setProtocolVersion(PROTOCOL_VERSION_2);
   pushAckPAcket.setToken(randomToken);
-  pushAckPAcket.setPacketTypeID(1);
+  pushAckPAcket.setPacketType(PUSH_ACK_PACKET_TYPE);
   
-  ubyte[] pushAckArray= pushAckPAcket.getProtocolVersion ~ pushAckPAcket.getToken ~ pushAckPAcket.getPacketTypeID;
-
+  ubyte[] pushAckArray= pushAckPAcket.getProtocolVersion ~ pushAckPAcket.getToken ~ pushAckPAcket.getPacketType;
+  
   assert(pushAckPAcket.toUbyteArray == pushAckArray);
 }
