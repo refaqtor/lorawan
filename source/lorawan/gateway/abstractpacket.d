@@ -12,6 +12,7 @@ import lorawan.gateway.lorawantypes;
 class AbstractPacket
 {
   public:
+    /// Default constructor
     this(ProtocolVersion protocolVersion, PacketType packetType, ubyte[2] token)
     {
       _protocolVersion = protocolVersion;

@@ -13,6 +13,7 @@ import lorawan.gateway.lorawantypes;
 class PushAckPacket : AbstractPacket
 {
   public:
+    /// Default constructor
     this(ubyte[2] token = [0, 0], ProtocolVersion protocolVersion = ProtocolVersion.VERSION_2)
     {
       super(protocolVersion, PacketType.PUSH_ACK, token);
