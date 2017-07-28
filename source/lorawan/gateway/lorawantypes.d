@@ -16,6 +16,8 @@ enum ProtocolVersion: ubyte
 /// Enumeration of packet types
 enum PacketType: ubyte
 {
+  /// PUSH_DATA packet type
+  PUSH_DATA = 0x00,
   /// PUSH_ACK packet type
   PUSH_ACK = 0x01
 }
