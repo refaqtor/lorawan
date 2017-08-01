@@ -8,12 +8,12 @@ module lorawan.gateway.pushdatapacket;
 
 import lorawan.gateway.abstractpacket;
 import lorawan.gateway.lorawantypes;
+import std.conv;
 import std.json;
 import std.typecons;
-import std.conv;
 
 /// The structure contains the RF packet
-struct rxpk
+struct Rxpk
 {
   public:
     //TODO: check setters (implement validations if necessary)
@@ -259,7 +259,7 @@ struct rxpk
     string _data; //Base64 encoded RF packet payload, padded
 }
 
-struct stat
+struct Stat
 {
   public:
     //TODO: check setters (implement validations if necessary)
@@ -425,8 +425,8 @@ struct stat
 
 private struct JsonStruct
 {
-  rxpk[] rxpkArray = [rxpk()];
-  stat statStruct = stat();
+  Rxpk[] rxpkArray = [Rxpk()];
+  Stat statStruct = Stat();
 }
 
 //TODO: implement setters for jsonObject...
@@ -443,7 +443,7 @@ class PushDataPacket : AbstractPacket
         rxpkArray = that array contains at least one JSON object, each object contain a RF packet and associated metadata.
         jsonValue = that value contains the status of the gateway.
     */
-    this(stat statStruct = stat(), rxpk[] rxpkArray = [rxpk()], ubyte[2] token = [0, 0], 
+    this(Stat statStruct = Stat(), Rxpk[] rxpkArray = [Rxpk()], ubyte[2] token = [0, 0], 
       ProtocolVersion protocolVersion = ProtocolVersion.VERSION_2, ubyte[8] gatewayID = [0, 0, 0, 0, 0, 0, 0, 0])
     in
     {
@@ -500,18 +500,18 @@ class PushDataPacket : AbstractPacket
     /** Used to get the rxpk array which represending part of json object
     
       Returns:
-        $(D rxpk[])
+        $(D Rxpk[])
     */ 
-    rxpk[] getRxpkArray(){ return _jsonStruct.rxpkArray; }
+    Rxpk[] getRxpkArray(){ return _jsonStruct.rxpkArray; }
     
     /** Used to set the rxpk array which represending part of json object
     
       Params:
         rxpkArray = value used to initialize rxpk array which represending part of json object
     */
-    void setRxpkArray(rxpk[] rxpkArray)
+    void setRxpkArray(Rxpk[] rxpkArray)
     {
-      JSONValue[] rxpkPackets = parseRxpk(rxpkArray);
+      const JSONValue[] rxpkPackets = parseRxpk(rxpkArray);
       if(rxpkPackets.length != 0){ _jsonStruct.rxpkArray = rxpkArray; }
       else
       {
@@ -523,16 +523,16 @@ class PushDataPacket : AbstractPacket
     /** Used to get the stat structure which represending part of json object
     
       Returns:
-        $(D stat)
+        $(D Stat)
     */ 
-    stat getStatStruct(){ return _jsonStruct.statStruct; }
+    Stat getStatStruct(){ return _jsonStruct.statStruct; }
     
     /** Used to set the stat stricture which represending part of json object
     
       Params:
         statStruct = value used to initialize stat stricture which represending part of json object
     */
-    void setStatStruct(stat statStruct)
+    void setStatStruct(Stat statStruct)
     {
       if(!statStruct.isEmpty()){ _jsonStruct.statStruct = statStruct; }
       else
@@ -548,7 +548,7 @@ class PushDataPacket : AbstractPacket
     
     JsonStruct _jsonStruct;
     
-    JSONValue getJsonValue(rxpk[] rxpkArray, stat statStruct)
+    JSONValue getJsonValue(Rxpk[] rxpkArray, Stat statStruct)
     {
       JSONValue jsonValue;
       JSONValue[] rxpkPackets;
@@ -563,29 +563,29 @@ class PushDataPacket : AbstractPacket
       return jsonValue;
     }
     
-    JSONValue[] parseRxpk(rxpk[] rxpkArray)
+    JSONValue[] parseRxpk(Rxpk[] rxpkArray)
     {
       JSONValue[] rxpkPackets = [];
       
-      foreach(rxpk rxpkStruct; rxpkArray)
+      foreach(Rxpk rxpkStruct; rxpkArray)
       {
         JSONValue rxpkValue;
         
-        auto time = rxpkStruct.getTime();
-        auto tmms = rxpkStruct.getTmms();
-        auto tmst = rxpkStruct.getTmst();
-        auto freq = rxpkStruct.getFreq();
-        auto chan = rxpkStruct.getChan();
-        auto rfch = rxpkStruct.getRfch();
-        CrcStatus stat = rxpkStruct.getStat();
-        ModulationIdentifier modu = rxpkStruct.getModu();
-        auto datrs = rxpkStruct.getDatrs();
-        auto datrn = rxpkStruct.getDatrn();
-        auto codr = rxpkStruct.getCodr();
-        auto rssi = rxpkStruct.getRssi();
-        auto lsnr = rxpkStruct.getLsnr();
-        auto size = rxpkStruct.getSize();
-        auto data = rxpkStruct.getData();
+        const auto time = rxpkStruct.getTime();
+        const auto tmms = rxpkStruct.getTmms();
+        const auto tmst = rxpkStruct.getTmst();
+        const auto freq = rxpkStruct.getFreq();
+        const auto chan = rxpkStruct.getChan();
+        const auto rfch = rxpkStruct.getRfch();
+        const CrcStatus stat = rxpkStruct.getStat();
+        const ModulationIdentifier modu = rxpkStruct.getModu();
+        const auto datrs = rxpkStruct.getDatrs();
+        const auto datrn = rxpkStruct.getDatrn();
+        const auto codr = rxpkStruct.getCodr();
+        const auto rssi = rxpkStruct.getRssi();
+        const auto lsnr = rxpkStruct.getLsnr();
+        const auto size = rxpkStruct.getSize();
+        const auto data = rxpkStruct.getData();
        
         if(time != ""){rxpkValue["time"] = time;}
         if(!tmms.isNull){ rxpkValue["tmms"] = tmms;}
@@ -611,22 +611,22 @@ class PushDataPacket : AbstractPacket
       return rxpkPackets;
     }
     
-    JSONValue parseStat(stat statStruct)
+    JSONValue parseStat(Stat statStruct)
     {
       JSONValue statVal;
       
       if(!statStruct.isEmpty())
       {   
-        auto time = statStruct.getTime();
-        auto latn = statStruct.getLatn();
-        auto late = statStruct.getLate();
-        auto alti = statStruct.getAlti();
-        auto rxnb = statStruct.getRxnb();
-        auto rxok = statStruct.getRxok();
-        auto rxfw = statStruct.getRxfw();
-        auto ackr = statStruct.getAckr();
-        auto dwnb = statStruct.getDwnb();
-        auto txnb = statStruct.getTxnb();
+        const auto time = statStruct.getTime();
+        const auto latn = statStruct.getLatn();
+        const auto late = statStruct.getLate();
+        const auto alti = statStruct.getAlti();
+        const auto rxnb = statStruct.getRxnb();
+        const auto rxok = statStruct.getRxok();
+        const auto rxfw = statStruct.getRxfw();
+        const auto ackr = statStruct.getAckr();
+        const auto dwnb = statStruct.getDwnb();
+        const auto txnb = statStruct.getTxnb();
           
         if(time != ""){ statVal["time"] = time;}
         if(!latn.isNull){ statVal["latn"] = cast(float) latn;}

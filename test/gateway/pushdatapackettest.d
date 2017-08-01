@@ -19,10 +19,10 @@ unittest
           
           ubyte[2] randomToken = [uniform!ubyte, uniform!ubyte];
           ubyte[8] gatewayID = [1, 2, 3, 4, 5, 6, 7, 8];
-          rxpk[] rxpkArray = [];
-          stat statStruct;
+          Rxpk[] rxpkArray = [];
+          Stat statStruct;
           
-          rxpk rxpkStruct;
+          Rxpk rxpkStruct;
           
           rxpkStruct.setTime("2013-03-31T16:21:17.528002Z");
           rxpkStruct.setTmms(1232645156);
