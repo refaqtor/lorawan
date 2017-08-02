@@ -12,7 +12,7 @@ import std.conv;
 import std.json;
 import std.typecons;
 
-/// The structure contains the RF packet
+/// Structure contains the RF packet
 struct Rxpk
 {
   public:
@@ -259,6 +259,7 @@ struct Rxpk
     string _data; //Base64 encoded RF packet payload, padded
 }
 
+/// Structure contains the statistics information
 struct Stat
 {
   public:
