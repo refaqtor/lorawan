@@ -6,6 +6,8 @@
 
 module lorawan.gateway.lorawantypes;
 
+alias GatewayID = ubyte[8];
+
 /// Enumeration of protocol versions
 enum ProtocolVersion: ubyte
 {

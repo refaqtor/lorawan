@@ -14,8 +14,6 @@ import std.datetime;
 import std.json;
 import std.typecons;
 
-alias GatewayID = ubyte[8];
-
 /// Structure contains the RF packet
 struct Rxpk
 {
