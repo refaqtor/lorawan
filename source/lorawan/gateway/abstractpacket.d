@@ -44,15 +44,8 @@ class AbstractPacket
     
       Params:
         protocolVersion = value used to initialize protocol version
-        
-      Returns:
-        $(D AbstractPacket)
     */
-    final AbstractPacket setProtocolVersion(ProtocolVersion protocolVersion)
-    { 
-      _protocolVersion = protocolVersion;
-       return this;
-    }
+    final void setProtocolVersion(ProtocolVersion protocolVersion){ _protocolVersion = protocolVersion; }
     
     /** Used to get the token
     
@@ -65,15 +58,8 @@ class AbstractPacket
     
       Params:
         token = value used to initialize token
-        
-      Returns:
-        $(D AbstractPacket)
     */    
-    final AbstractPacket setToken(ubyte[2] token)
-    { 
-      _token = token; 
-      return this; 
-    }
+    final void setToken(ubyte[2] token){ _token = token; }
     
     /** Used to get the packet type
     

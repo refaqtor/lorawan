@@ -4,7 +4,9 @@
    License: MIT
 */
 
-void main()
+import checkit;
+
+int main(string[] args)
 {
-  return;
+  return runTests(args);
 }

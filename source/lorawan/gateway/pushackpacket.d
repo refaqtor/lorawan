@@ -19,9 +19,9 @@ class PushAckPacket : AbstractPacket
         protocolVersion = protocol version between Lora gateway and server, default value is ProtocolVersion.VERSION_2.
         token = random token, default falue is [0, 0].
     */  
-    this(ubyte[2] token = [0, 0], ProtocolVersion protocolVersion = ProtocolVersion.VERSION_2)
+    this()
     {
-      super(protocolVersion, PacketType.PUSH_ACK, token);
+      super(ProtocolVersion.VERSION_2, PacketType.PUSH_ACK, [0, 0]);
     }
   
     /** Used to converts PUSH_ACK packet to an array of bytes
