@@ -12,3 +12,5 @@ lorawan-*
 *.a
 .idea
 lorawan.iml
+docs/
+dub.selections.json

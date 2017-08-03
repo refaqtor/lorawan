@@ -8,7 +8,9 @@ module lorawan.gateway.pushdatapacket;
 
 import lorawan.gateway.abstractpacket;
 import lorawan.gateway.lorawantypes;
+import lorawan.gateway.macpacket;
 import std.conv;
+import std.datetime;
 import std.json;
 import std.typecons;
 
@@ -16,20 +18,27 @@ import std.typecons;
 struct Rxpk
 {
   public:
-    //TODO: check setters (implement validations if necessary)
     /**Get UTC time of pkt RX, us precision, ISO 8601 'compact' format
       
        Returns:
-        $(D string)
+        $(D Nullable!SysTime)
     */
-    string getTime(){ return _time; }
+    Nullable!SysTime getTime(){ return _time; }
     
     /**Set UTC time of pkt RX, us precision, ISO 8601 'compact' format
     
       Params:
         time = value used to initialize UTC time of pkt RX, us precision, ISO 8601 'compact' format
+        
+      Returns:
+        $(D bool)
     */
-    void setTime(string time){ _time = time; }
+    bool setTime(SysTime time)
+    {
+      if(time.timezone().name != "UTC"){ return false; }
+      _time = time;
+      return true;
+    }
 
     
     /**Get GPS time of pkt RX, number of milliseconds since 06.Jan.1980
@@ -140,16 +149,16 @@ struct Rxpk
     /**Get LoRa datarate identifier (eg. SF12BW500)
       
        Returns:
-        $(D string)
+        $(D LoraDatarate)
     */    
-    string getDatrs(){ return _datrs; }    
+    LoraDatarate getDatrs(){ return _datrs; }    
     
     /**Set LoRa datarate identifier (eg. SF12BW500)
     
       Params:
         datrs = value used to initialize LoRa datarate identifier
     */
-    void setDatrs(string datrs){ _datrs = datrs; }
+    void setDatr(LoraDatarate datrs){ _datrs = datrs; }
 
     
     /**Get FSK datarate (unsigned integer, in bits per second)
@@ -164,37 +173,37 @@ struct Rxpk
       Params:
         datrn = value used to initialize FSK datarate
     */
-    void setDatrn(uint datrn){ _datrn = datrn; }
+    void setDatr(uint datrn){ _datrn = datrn; }
 
-    
+   
     /**Get LoRa ECC coding rate identifier
       
        Returns:
-        $(D string)
+        $(D CyclicCodingRate)
     */    
-    string getCodr(){ return _codr; }    
+    CyclicCodingRate getCodr(){ return _codr; }    
     
     /**Set LoRa ECC coding rate identifier
     
       Params:
         codr = value used to initialize LoRa ECC coding rate identifier
     */
-    void setCodr(string codr){ _codr = codr; }
+    void setCodr(CyclicCodingRate codr){ _codr = codr; }
 
     
-    /**Get RSSI in dBm (signed integer, 1 dB precision)
+    /**Get RSSI in dBm (signed short, 1 dB precision)
       
        Returns:
-        $(D Nullable!int)
+        $(D Nullable!short)
     */    
-    Nullable!int getRssi(){ return _rssi; } 
+    Nullable!short getRssi(){ return _rssi; } 
        
-    /**Set RSSI in dBm (signed integer, 1 dB precision)
+    /**Set RSSI in dBm (signed short, 1 dB precision)
     
       Params:
         rssi = value used to initialize RSSI
     */
-    void setRssi(int rssi){ _rssi = rssi; }
+    void setRssi(short rssi){ _rssi = rssi; }
 
     
     /**Get Lora SNR ratio in dB (signed float, 0.1 dB precision)
@@ -230,19 +239,19 @@ struct Rxpk
     /**Get Base64 encoded RF packet payload, padded
       
        Returns:
-        $(D string)
+        $(D MacPacket)
     */    
-    string getData(){ return _data; }
+    MacPacket getData(){ return _data; }
     
     /**Set Base64 encoded RF packet payload, padded
     
       Params:
         data = value used to initialize data field
     */
-    void setData(string data){ _data = data; }     
+    void setData(MacPacket data){ _data = data; }     
     
   private:   
-    string _time; //UTC time of pkt RX, us precision, ISO 8601 'compact' format
+    Nullable!SysTime _time; //UTC time of pkt RX, us precision, ISO 8601 'compact' format
     Nullable!ulong _tmms; //GPS time of pkt RX, number of milliseconds since 06.Jan.1980
     Nullable!uint _tmst; //Internal timestamp of "RX finished" event (32b unsigned)
     Nullable!double _freq; //RX central frequency in MHz (double, Hz precision)
@@ -250,61 +259,65 @@ struct Rxpk
     Nullable!uint _rfch; //Concentrator "RF chain" used for RX (unsigned integer)
     CrcStatus _stat; //CRC status: 1 = OK, -1 = fail, 0 = no CRC
     ModulationIdentifier _modu; //Modulation identifier "LORA" or "FSK"
-    string _datrs; //LoRa datarate identifier (eg. SF12BW500)
+    LoraDatarate _datrs; //LoRa datarate identifier (eg. SF12BW500)
     Nullable!uint _datrn; //FSK datarate (unsigned integer, in bits per second)
-    string _codr; //LoRa ECC coding rate identifier
-    Nullable!int _rssi; //RSSI in dBm (signed integer, 1 dB precision)
+    CyclicCodingRate _codr; //LoRa ECC coding rate identifier
+    Nullable!short _rssi; //RSSI in dBm (signed short, 1 dB precision)
     Nullable!float _lsnr; //Lora SNR ratio in dB (signed float, 0.1 dB precision)
     Nullable!uint _size; //RF packet payload size in bytes (unsigned integer)
-    string _data; //Base64 encoded RF packet payload, padded
+    MacPacket _data; //Base64 encoded RF packet payload, padded
 }
 
 /// Structure contains the statistics information
 struct Stat
 {
   public:
-    //TODO: check setters (implement validations if necessary)
     /**Get UTC 'system' time of the gateway, ISO 8601 'expanded' format
       
        Returns:
          $(D string)
     */
-    string getTime(){ return _time; }
+    Nullable!SysTime getTime(){ return _time; }
     
     /**Set UTC 'system' time of the gateway, ISO 8601 'expanded' format
     
       Params:
         time = value used to initialize UTC 'system' time of the gateway, ISO 8601 'expanded' format
     */
-    void setTime(string time){ _time = time; }
+    bool setTime(SysTime time)
+    { 
+      if(time.timezone().name != "UTC"){ return false; }
+      _time = time;
+      return true;
+    }
     
     /**Get GPS latitude of the gateway in degree (float, N is +)
       
        Returns:
-         $(D Nullable!float)
+         $(D Nullable!double)
     */
-    Nullable!float getLatn(){ return _latn; }
+    Nullable!double getLatn(){ return _latn; }
     
     /**Set GPS latitude of the gateway in degree (float, N is +)
     
       Params:
         latn = value used to initialize GPS latitude of the gateway in degree (float, N is +)
     */
-    void setLatn(float latn){ _latn = latn; }
+    void setLatn(double latn){ _latn = latn; }
 
     /**Get GPS latitude of the gateway in degree (float, E is +)
       
        Returns:
-         $(D Nullable!float)
+         $(D Nullable!double)
     */
-    Nullable!float getLate(){ return _late; }
+    Nullable!double getLate(){ return _late; }
     
     /**Set GPS latitude of the gateway in degree (float, E is +)
     
       Params:
         late = value used to initialize GPS latitude of the gateway in degree (float, E is +)
     */
-    void setLate(float late){ _late = late; }
+    void setLate(double late){ _late = late; }
     
     /**Get GPS altitude of the gateway in meter RX (integer)
       
@@ -320,47 +333,47 @@ struct Stat
     */
     void setAlti(int alti){ _alti = alti; }
     
-    /**Get number of radio packets received (unsigned integer)
+    /**Get number of radio packets received (unsigned long)
       
        Returns:
-         $(D Nullable!uint)
+         $(D Nullable!ulong)
     */
-    Nullable!uint getRxnb(){ return _rxnb; }
+    Nullable!ulong getRxnb(){ return _rxnb; }
     
-    /**Set number of radio packets received (unsigned integer)
+    /**Set number of radio packets received (unsigned long)
     
       Params:
-        rxnb = value used to initialize number of radio packets received (unsigned integer)
+        rxnb = value used to initialize number of radio packets received (unsigned long)
     */
-    void setRxnb(uint rxnb){ _rxnb = rxnb; }
+    void setRxnb(ulong rxnb){ _rxnb = rxnb; }
     
     /**Get number of radio packets received with a valid PHY CRC
       
        Returns:
-         $(D Nullable!uint)
+         $(D Nullable!ulong)
     */
-    Nullable!uint getRxok(){ return _rxok; }
+    Nullable!ulong getRxok(){ return _rxok; }
     
     /**Set number of radio packets received with a valid PHY CRC
     
       Params:
         rxok = value used to initialize number of radio packets received with a valid PHY CRC
     */
-    void setRxok(uint rxok){ _rxok = rxok; }
+    void setRxok(ulong rxok){ _rxok = rxok; }
     
-    /**Get number of radio packets forwarded (unsigned integer)
+    /**Get number of radio packets forwarded (unsigned long)
       
        Returns:
-         $(D Nullable!uint)
+         $(D Nullable!ulong)
     */
-    Nullable!uint getRxfw(){ return _rxfw; }
+    Nullable!ulong getRxfw(){ return _rxfw; }
     
-    /**Set number of radio packets forwarded (unsigned integer)
+    /**Set number of radio packets forwarded (unsigned long)
     
       Params:
-        rxfw = value used to initialize number of radio packets forwarded (unsigned integer)
+        rxfw = value used to initialize number of radio packets forwarded (unsigned long)
     */
-    void setRxfw(uint rxfw){ _rxfw = rxfw; }
+    void setRxfw(ulong rxfw){ _rxfw = rxfw; }
     
     /**Get percentage of upstream datagrams that were acknowledged
       
@@ -404,57 +417,41 @@ struct Stat
     */
     void setTxnb(uint txnb){ _txnb = txnb; }
     
-    //TODO: add docs
+    /**The property that determines whether the structure fields are initialized with default values or not
+    
+      Returns:
+        $(D bool)
+    */
     bool isEmpty()
     {
-      return (_time == "" && _latn.isNull && _late.isNull && _alti.isNull && _rxnb.isNull && _rxok.isNull &&
+      return (_time.isNull && _latn.isNull && _late.isNull && _alti.isNull && _rxnb.isNull && _rxok.isNull &&
         _rxfw.isNull && _ackr.isNull && _dwnb.isNull && _txnb.isNull);
     }   
 
   private:
-    string _time; //UTC 'system' time of the gateway, ISO 8601 'expanded' format
-    Nullable!float _latn; //GPS latitude of the gateway in degree (float, N is +)
-    Nullable!float _late; //GPS latitude of the gateway in degree (float, E is +)
+    Nullable!SysTime _time; //UTC 'system' time of the gateway, ISO 8601 'expanded' format
+    Nullable!double _latn; //GPS latitude of the gateway in degree (float, N is +)
+    Nullable!double _late; //GPS latitude of the gateway in degree (float, E is +)
     Nullable!int _alti; //GPS altitude of the gateway in meter RX (integer)
-    Nullable!uint _rxnb; //Number of radio packets received (unsigned integer)
-    Nullable!uint _rxok; //Number of radio packets received with a valid PHY CRC
-    Nullable!uint _rxfw; //Number of radio packets forwarded (unsigned integer)
+    Nullable!ulong _rxnb; //Number of radio packets received (unsigned integer)
+    Nullable!ulong _rxok; //Number of radio packets received with a valid PHY CRC
+    Nullable!ulong _rxfw; //Number of radio packets forwarded (unsigned integer)
     Nullable!double _ackr; //Percentage of upstream datagrams that were acknowledged
     Nullable!uint _dwnb; //Number of downlink datagrams received (unsigned integer)
     Nullable!uint _txnb; //Number of packets emitted (unsigned integer)
 }
 
-private struct JsonStruct
-{
-  Rxpk[] rxpkArray = [Rxpk()];
-  Stat statStruct = Stat();
-}
-
-//TODO: implement setters for jsonObject...
 /// The class represending the PUSH_DATA packet
 class PushDataPacket : AbstractPacket
 {
   public:   
-    /** Used to initialize PUSH_DATA packet
-    
-      Params:
-        token = random token, default falue is [0, 0].
-        protocolVersion = protocol version between Lora gateway and server, default value is ProtocolVersion.VERSION_2.
-        gatewayID = gateway unique identifier (MAC address), default value is [0, 0, 0, 0, 0, 0, 0, 0].
-        rxpkArray = that array contains at least one JSON object, each object contain a RF packet and associated metadata.
-        jsonValue = that value contains the status of the gateway.
-    */
-    this(Stat statStruct = Stat(), Rxpk[] rxpkArray = [Rxpk()], ubyte[2] token = [0, 0], 
-      ProtocolVersion protocolVersion = ProtocolVersion.VERSION_2, ubyte[8] gatewayID = [0, 0, 0, 0, 0, 0, 0, 0])
-    in
+    /// Used to initialize PUSH_DATA packet
+    this()
     {
-      _jsonObject = getJsonValue(rxpkArray, statStruct);
-      assert(!_jsonObject.isNull());
-    }
-    body
-    {
-      super(protocolVersion, PacketType.PUSH_DATA, token);
-      _gatewayID = gatewayID;
+      super(ProtocolVersion.VERSION_2, PacketType.PUSH_DATA, [0, 0]);
+      _rxpkArray = [Rxpk()];
+      _statStruct = Stat();
+      _gatewayID = [0, 0, 0, 0, 0, 0, 0, 0];
     }
     
     /** Used to converts PUSH_DATA packet to an array of bytes
@@ -465,12 +462,8 @@ class PushDataPacket : AbstractPacket
     override ubyte[] toByteArray()
     {
       ubyte[] result = _protocolVersion ~ _token ~ _packetType ~ _gatewayID;
-      _jsonObject = getJsonValue(_jsonStruct.rxpkArray, _jsonStruct.statStruct);
-
-      if(_jsonObject.type() !is JSON_TYPE.NULL)
-      {
-        result ~= cast(ubyte[]) toJSON(_jsonObject);
-      }
+      JSONValue jsonValue = getJsonValue(_rxpkArray, _statStruct);
+      result ~= cast(ubyte[]) toJSON(jsonValue);
       return result;
     }
     
@@ -488,68 +481,62 @@ class PushDataPacket : AbstractPacket
     */    
     void setGatewayID(ubyte[8] gatewayID){ _gatewayID = gatewayID; }
     
-    /** Used to get the json object
-    
-      Returns:
-        $(D JSONValue)
-    */     
-    JSONValue getJsonObject(){
-      _jsonObject = getJsonValue(_jsonStruct.rxpkArray, _jsonStruct.statStruct);
-      return _jsonObject;
-    }
-    
-    /** Used to get the rxpk array which represending part of json object
+    /** Used to get the rxpk array
     
       Returns:
         $(D Rxpk[])
     */ 
-    Rxpk[] getRxpkArray(){ return _jsonStruct.rxpkArray; }
+    Rxpk[] getRxpkArray(){ return _rxpkArray; }
     
-    /** Used to set the rxpk array which represending part of json object
+    /** Used to set the rxpk array
     
       Params:
-        rxpkArray = value used to initialize rxpk array which represending part of json object
+        rxpkArray = value used to initialize rxpk array
+        
+      Returns:
+        $(D bool)
     */
-    void setRxpkArray(Rxpk[] rxpkArray)
-    {
-      const JSONValue[] rxpkPackets = parseRxpk(rxpkArray);
-      if(rxpkPackets.length != 0){ _jsonStruct.rxpkArray = rxpkArray; }
+    bool setRxpkArray(Rxpk[] rxpkArray)
+    { 
+      if(rxpkArray.length != 0){ _rxpkArray = rxpkArray; }
       else
       {
-        if(!_jsonStruct.statStruct.isEmpty()){ _jsonStruct.rxpkArray = rxpkArray; }
-        //Нужно здесь генерировать ошибку?
+        if(!_statStruct.isEmpty()){ _rxpkArray = rxpkArray; }
+        else { return false; }
       }
-    }    
+      return true;
+    }
     
-    /** Used to get the stat structure which represending part of json object
+    /** Used to get the stat structure which represending status of the gateway
     
       Returns:
         $(D Stat)
-    */ 
-    Stat getStatStruct(){ return _jsonStruct.statStruct; }
+    */
+    Stat getStatStruct(){ return _statStruct; }
     
-    /** Used to set the stat stricture which represending part of json object
+    /** Used to set the stat stricture which represending status of the gateway
     
       Params:
-        statStruct = value used to initialize stat stricture which represending part of json object
+        statStruct = value used to initialize stat stricture which represending status of the gateway
     */
-    void setStatStruct(Stat statStruct)
+    bool setStatStruct(Stat statStruct)
     {
-      if(!statStruct.isEmpty()){ _jsonStruct.statStruct = statStruct; }
+      if(!statStruct.isEmpty()){ _statStruct = statStruct; }
       else
       {
-        if(_jsonStruct.rxpkArray.length != 0){ _jsonStruct.statStruct = statStruct; }
-        //Нужно здесь генерировать ошибку?
+        if(_rxpkArray.length != 0){ _statStruct = statStruct; }
+        else{ return false; }
       }
-    }  
+      return true;
+    }
     
   private:
     ubyte[8] _gatewayID;
     JSONValue _jsonObject;
+    Rxpk[] _rxpkArray;
+    Stat _statStruct;
     
-    JsonStruct _jsonStruct;
-    
-    JSONValue getJsonValue(Rxpk[] rxpkArray, Stat statStruct)
+    public JSONValue getJsonValue(Rxpk[] rxpkArray, Stat statStruct)
     {
       JSONValue jsonValue;
       JSONValue[] rxpkPackets;
@@ -572,7 +559,7 @@ class PushDataPacket : AbstractPacket
       {
         JSONValue rxpkValue;
         
-        const auto time = rxpkStruct.getTime();
+        const Nullable!SysTime time = rxpkStruct.getTime();
         const auto tmms = rxpkStruct.getTmms();
         const auto tmst = rxpkStruct.getTmst();
         const auto freq = rxpkStruct.getFreq();
@@ -580,15 +567,15 @@ class PushDataPacket : AbstractPacket
         const auto rfch = rxpkStruct.getRfch();
         const CrcStatus stat = rxpkStruct.getStat();
         const ModulationIdentifier modu = rxpkStruct.getModu();
-        const auto datrs = rxpkStruct.getDatrs();
+        const LoraDatarate datrs = rxpkStruct.getDatrs();
         const auto datrn = rxpkStruct.getDatrn();
-        const auto codr = rxpkStruct.getCodr();
+        const CyclicCodingRate codr = rxpkStruct.getCodr();
         const auto rssi = rxpkStruct.getRssi();
         const auto lsnr = rxpkStruct.getLsnr();
         const auto size = rxpkStruct.getSize();
-        const auto data = rxpkStruct.getData();
+        MacPacket data = rxpkStruct.getData();
        
-        if(time != ""){rxpkValue["time"] = time;}
+        if(!time.isNull){ rxpkValue["time"] = time.toISOString();}
         if(!tmms.isNull){ rxpkValue["tmms"] = tmms;}
         if(!tmst.isNull){ rxpkValue["tmst"] = tmst;}
         if(!freq.isNull){ rxpkValue["freq"] = cast(double)freq;}
@@ -596,13 +583,26 @@ class PushDataPacket : AbstractPacket
         if(!rfch.isNull){ rxpkValue["rfch"] = rfch;}
         rxpkValue["stat"] = cast(byte)stat;
         rxpkValue["modu"] = modu;
-        if(datrs != ""){ rxpkValue["datrs"] = datrs;}
-        if(!datrn.isNull){ rxpkValue["datrn"] = datrn;}
-        if(codr != ""){ rxpkValue["codr"] = codr;}
+        
+        if(modu == ModulationIdentifier.LORA)
+        {
+          rxpkValue["datr"] = datrs;
+        }
+        else
+        {
+          if(modu == ModulationIdentifier.FSK)
+          {
+            if(!datrn.isNull)
+            { 
+              rxpkValue["datr"] = datrn;
+            }
+          }
+        }
+        rxpkValue["codr"] = codr;
         if(!rssi.isNull){ rxpkValue["rssi"] = rssi;}
         if(!lsnr.isNull){ rxpkValue["lsnr"] = cast(float) lsnr;}
         if(!size.isNull){ rxpkValue["size"] = size;}
-        if(data != ""){ rxpkValue["data"] = data;}
+        if(data !is null){ rxpkValue["data"] = data.getData();}
         if(!rxpkValue.isNull())
         {
           rxpkPackets ~= rxpkValue;
@@ -618,7 +618,7 @@ class PushDataPacket : AbstractPacket
       
       if(!statStruct.isEmpty())
       {   
-        const auto time = statStruct.getTime();
+        const Nullable!SysTime time = statStruct.getTime();
         const auto latn = statStruct.getLatn();
         const auto late = statStruct.getLate();
         const auto alti = statStruct.getAlti();
@@ -629,9 +629,9 @@ class PushDataPacket : AbstractPacket
         const auto dwnb = statStruct.getDwnb();
         const auto txnb = statStruct.getTxnb();
           
-        if(time != ""){ statVal["time"] = time;}
-        if(!latn.isNull){ statVal["latn"] = cast(float) latn;}
-        if(!late.isNull){ statVal["late"] = cast(float) late;}
+        if(!time.isNull){ statVal["time"] = time.toISOExtString();}
+        if(!latn.isNull){ statVal["latn"] = cast(double) latn;}
+        if(!late.isNull){ statVal["late"] = cast(double) late;}
         if(!alti.isNull){ statVal["alti"] = alti;}
         if(!rxnb.isNull){ statVal["rxnb"] = rxnb;}
         if(!rxok.isNull){ statVal["rxok"] = rxok;}
