@@ -45,17 +45,13 @@ enum ModulationIdentifier : string
 /// Enumeration of lora datarate values
 enum LoraDatarate : string
 {
-  ///SF6BW62.5 lora datarate value
-  SF_6_BW_62_5 = "SF6BW62.5",
   ///SF6BW125 lora datarate value
   SF_6_BW_125 = "SF6BW125",
   ///SF6BW250 lora datarate value
   SF_6_BW_250 = "SF6BW250",
   ///SF6BW500 lora datarate value
   SF_6_BW_500 = "SF6BW500",
-  
-  ///SF7BW62.5 lora datarate value
-  SF_7_BW_62_5 = "SF7BW62.5",
+
   ///SF7BW125 lora datarate value
   SF_7_BW_125 = "SF7BW125",
   ///SF7BW250 lora datarate value
@@ -63,8 +59,6 @@ enum LoraDatarate : string
   ///SF7BW500 lora datarate value
   SF_7_BW_500 = "SF7BW500",
   
-  ///SF8BW62.5 lora datarate value
-  SF_8_BW_62_5 = "SF8BW62.5",
   ///SF8BW125 lora datarate value
   SF_8_BW_125 = "SF8BW125",
   ///SF8BW250 lora datarate value
@@ -72,8 +66,6 @@ enum LoraDatarate : string
   ///SF8BW500 lora datarate value
   SF_8_BW_500 = "SF8BW500",
   
-  ///SF9BW62.5 lora datarate value
-  SF_9_BW_62_5 = "SF9BW62.5",
   ///SF9BW125 lora datarate value
   SF_9_BW_125 = "SF9BW125",
   ///SF9BW250 lora datarate value
@@ -81,17 +73,13 @@ enum LoraDatarate : string
   ///SF9BW500 lora datarate value
   SF_9_BW_500 = "SF9BW500",
   
-  ///SF10BW62.5 lora datarate value
-  SF_10_BW_62_5 = "SF10BW62.5",
   ///SF10BW125 lora datarate value
   SF_10_BW_125 = "SF10BW125",
   ///SF10BW250 lora datarate value
   SF_10_BW_250 = "SF10BW250",
   ///SF10BW500 lora datarate value
   SF_10_BW_500 = "SF10BW500",
-  
-  ///SF11BW62.5 lora datarate value
-  SF_11_BW_62_5 = "SF11BW62.5",
+
   ///SF11BW125 lora datarate value
   SF_11_BW_125 = "SF11BW125",
   ///SF11BW250 lora datarate value
@@ -99,8 +87,6 @@ enum LoraDatarate : string
   ///SF11BW500 lora datarate value
   SF_11_BW_500 = "SF11BW500",
   
-  ///SF12BW62.5 lora datarate value
-  SF_12_BW_62_5 = "SF12BW62.5",
   ///SF12BW125 lora datarate value
   SF_12_BW_125 = "SF12BW125",
   ///SF12BW250 lora datarate value

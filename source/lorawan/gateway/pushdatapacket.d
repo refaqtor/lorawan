@@ -14,6 +14,8 @@ import std.datetime;
 import std.json;
 import std.typecons;
 
+alias GatewayID = ubyte[8];
+
 /// Structure contains the RF packet
 struct Rxpk
 {
@@ -86,19 +88,19 @@ struct Rxpk
     void setFreq(double freq){ _freq = freq; }
 
     
-    /**Get concentrator "IF" channel used for RX (unsigned integer)
+    /**Get concentrator "IF" channel used for RX (unsigned byte)
       
        Returns:
-        $(D Nullable!uint)
+        $(D Nullable!ubyte)
     */    
-    Nullable!uint getChan(){ return _chan; }    
+    Nullable!ubyte getChan(){ return _chan; }    
     
-    /**Set concentrator "IF" channel used for RX (unsigned integer)
+    /**Set concentrator "IF" channel used for RX (unsigned byte)
     
       Params:
         chan = value used to initialize concentrator "IF" channel used for RX
     */
-    void setChan(uint chan){ _chan = chan; }
+    void setChan(ubyte chan){ _chan = chan; }
 
     
     /**Get concentrator "RF chain" used for RX (unsigned integer)
@@ -255,7 +257,7 @@ struct Rxpk
     Nullable!ulong _tmms; //GPS time of pkt RX, number of milliseconds since 06.Jan.1980
     Nullable!uint _tmst; //Internal timestamp of "RX finished" event (32b unsigned)
     Nullable!double _freq; //RX central frequency in MHz (double, Hz precision)
-    Nullable!uint _chan; //Concentrator "IF" channel used for RX (unsigned integer)
+    Nullable!ubyte _chan; //Concentrator "IF" channel used for RX (unsigned byte)
     Nullable!uint _rfch; //Concentrator "RF chain" used for RX (unsigned integer)
     CrcStatus _stat; //CRC status: 1 = OK, -1 = fail, 0 = no CRC
     ModulationIdentifier _modu; //Modulation identifier "LORA" or "FSK"
@@ -470,16 +472,16 @@ class PushDataPacket : AbstractPacket
     /** Used to get the gateway identifier (MAC address)
     
       Returns:
-        $(D ubyte[8])
+        $(D GatewayID)
     */     
-    ubyte[8] getGatewayID(){ return _gatewayID; }
+    GatewayID getGatewayID(){ return _gatewayID; }
     
     /** Used to set the gateway identifier (MAC address)
     
       Params:
         gatewayID = value used to initialize gateway identifier (MAC address)
     */    
-    void setGatewayID(ubyte[8] gatewayID){ _gatewayID = gatewayID; }
+    void setGatewayID(GatewayID gatewayID){ _gatewayID = gatewayID; }
     
     /** Used to get the rxpk array
     
@@ -536,7 +538,7 @@ class PushDataPacket : AbstractPacket
     Rxpk[] _rxpkArray;
     Stat _statStruct;
     
-    public JSONValue getJsonValue(Rxpk[] rxpkArray, Stat statStruct)
+    JSONValue getJsonValue(Rxpk[] rxpkArray, Stat statStruct)
     {
       JSONValue jsonValue;
       JSONValue[] rxpkPackets;

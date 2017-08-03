@@ -127,7 +127,7 @@ unittest
           string jsonString = `{"rxpk" : [{
             "stat":1,
             "modu":"LORA",
-            "datr":"SF6BW62.5",
+            "datr":"SF6BW125",
             "codr":"4/5"
           }]}`;
           JSONValue expectedJsonValue = parseJSON(jsonString);
