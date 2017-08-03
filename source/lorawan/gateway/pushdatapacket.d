@@ -7,6 +7,7 @@
 module lorawan.gateway.pushdatapacket;
 
 import lorawan.gateway.abstractpacket;
+import lorawan.gateway.lorawanexception;
 import lorawan.gateway.lorawantypes;
 import lorawan.gateway.macpacket;
 import std.conv;
@@ -29,15 +30,15 @@ struct Rxpk
     
       Params:
         time = value used to initialize UTC time of pkt RX, us precision, ISO 8601 'compact' format
-        
-      Returns:
-        $(D bool)
+
     */
-    bool setTime(SysTime time)
+    void setTime(SysTime time)
     {
-      if(time.timezone().name != "UTC"){ return false; }
+      if(time.timezone().name != "UTC")
+      { 
+        throw new LorawanException("'time' should be in UTC format, not in '" ~ time.timezone().name ~ "'");
+      }
       _time = time;
-      return true;
     }
 
     
@@ -284,11 +285,13 @@ struct Stat
       Params:
         time = value used to initialize UTC 'system' time of the gateway, ISO 8601 'expanded' format
     */
-    bool setTime(SysTime time)
-    { 
-      if(time.timezone().name != "UTC"){ return false; }
+    void setTime(SysTime time)
+    {
+      if(time.timezone().name != "UTC")
+      { 
+        throw new LorawanException("'time' should be in UTC format, not in '" ~ time.timezone().name ~ "'");
+      }
       _time = time;
-      return true;
     }
     
     /**Get GPS latitude of the gateway in degree (float, N is +)
@@ -433,9 +436,9 @@ struct Stat
     Nullable!double _latn; //GPS latitude of the gateway in degree (float, N is +)
     Nullable!double _late; //GPS latitude of the gateway in degree (float, E is +)
     Nullable!int _alti; //GPS altitude of the gateway in meter RX (integer)
-    Nullable!ulong _rxnb; //Number of radio packets received (unsigned integer)
+    Nullable!ulong _rxnb; //Number of radio packets received (unsigned long)
     Nullable!ulong _rxok; //Number of radio packets received with a valid PHY CRC
-    Nullable!ulong _rxfw; //Number of radio packets forwarded (unsigned integer)
+    Nullable!ulong _rxfw; //Number of radio packets forwarded (unsigned long)
     Nullable!double _ackr; //Percentage of upstream datagrams that were acknowledged
     Nullable!uint _dwnb; //Number of downlink datagrams received (unsigned integer)
     Nullable!uint _txnb; //Number of packets emitted (unsigned integer)

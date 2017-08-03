@@ -20,7 +20,7 @@ unittest
           PushDataPacket pushDataPacket = new PushDataPacket();
           
           ubyte[2] randomToken = [uniform!ubyte, uniform!ubyte];
-          ubyte[8] gatewayID = [1, 2, 3, 4, 5, 6, 7, 8];
+          GatewayID gatewayID = [1, 2, 3, 4, 5, 6, 7, 8];
           Rxpk[] rxpkArray = [];
           Stat statStruct;
           
@@ -122,7 +122,7 @@ unittest
           PushDataPacket pushDataPacket = new PushDataPacket;
           
           ubyte[2] randomToken = [0, 0];
-          ubyte[8] gatewayID = [0, 0, 0, 0, 0, 0, 0, 0];
+          GatewayID gatewayID = [0, 0, 0, 0, 0, 0, 0, 0];
           
           string jsonString = `{"rxpk" : [{
             "stat":1,
@@ -300,4 +300,135 @@ unittest
           });
       });
   });
+  
+  scenario!("Set not UTC time for rxpk structure", ["gateway"])
+  ({
+      given!"rxpk structure and no UTC time value"
+      ({ 
+          Rxpk rxpkStruct;
+          SysTime sysTime = SysTime(DateTime(2017, 6, 3, 22, 22, 52));
+          sysTime.timezone(PosixTimeZone.getTimeZone("Africa/Freetown"));
+                    
+          when!"Function 'setTime' is called"
+          ({  
+              then!"Get throw with message"
+              ({
+                  (rxpkStruct.setTime(sysTime)).shouldThrowWithMessage("'time' should be in UTC format, not in 'Africa/Freetown'");
+              });
+          });
+      });
+  });
+  
+  scenario!("Set not UTC time for stat structure", ["gateway"])
+  ({
+      given!"stat structure and no UTC time value"
+      ({ 
+          Stat statStruct;
+          SysTime sysTime = SysTime(DateTime(2017, 6, 3, 22, 22, 52));
+          sysTime.timezone(PosixTimeZone.getTimeZone("Africa/Freetown"));
+                    
+          when!"Function 'setTime' is called"
+          ({  
+              then!"Get throw with message"
+              ({
+                  (statStruct.setTime(sysTime)).shouldThrowWithMessage("'time' should be in UTC format, not in 'Africa/Freetown'");
+              });
+          });
+      });
+  });
+    
+  scenario!("Transformation an array of bytes that represending the PUSH_DATA packet correctly into PUSH_DATA packet", ["gateway"])
+  ({
+      given!"Array of bytes that represending the PUSH_DATA packet correctly"
+      ({
+          PushDataPacket expected = new PushDataPacket;
+          
+          ubyte[2] randomToken = [uniform!ubyte, uniform!ubyte];
+          GatewayID gatewayID = [1, 2, 3, 4, 5, 6, 7, 8];
+          Rxpk[] rxpkArray = [];
+          Stat statStruct;
+          
+          Rxpk rxpkStruct;
+          
+          SysTime sysTime = SysTime(DateTime(2017, 6, 3, 22, 22, 52), hnsecs(45), UTC());
+          MacPacket data = new MacPacket;
+          data.setData("-DS4CGaDCdG+48eJNM3Vai-zDpsR71Pn9CPA9uCON84");
+          
+          rxpkStruct.setTime(sysTime);
+          rxpkStruct.setTmms(1232645156);
+          rxpkStruct.setTmst(3512348611);
+          rxpkStruct.setChan(2);
+          rxpkStruct.setRfch(0);
+          rxpkStruct.setFreq(866.349812);
+          rxpkStruct.setStat(CrcStatus.OK);
+          rxpkStruct.setModu(ModulationIdentifier.LORA);
+          rxpkStruct.setDatr(LoraDatarate.SF_7_BW_125);
+          rxpkStruct.setDatr(500000);
+          rxpkStruct.setCodr(CyclicCodingRate.CR_4_6);
+          rxpkStruct.setRssi(-35);
+          rxpkStruct.setLsnr(5.1);
+          rxpkStruct.setSize(32);
+          rxpkStruct.setData(data);
+          
+          statStruct.setTime(sysTime);
+          statStruct.setLatn(46.24000);
+          statStruct.setLate(3.25230);
+          statStruct.setAlti(145);
+          statStruct.setRxnb(2);
+          statStruct.setRxok(2);
+          statStruct.setRxfw(2);
+          statStruct.setAckr(100.0);
+          statStruct.setDwnb(2);
+          statStruct.setTxnb(2);
+          
+          rxpkArray ~= rxpkStruct;
+          
+          expected.setProtocolVersion(ProtocolVersion.VERSION_2);
+          expected.setToken(randomToken);
+          expected.setGatewayID(gatewayID);
+          expected.setRxpkArray(rxpkArray);
+          expected.setStatStruct(statStruct);
+          
+          ubyte[] pushDataArray = expected.toByteArray;
+          
+          when!"Function 'parse' is called"
+          ({
+              auto pushDataPacket = Lora.parse(pushDataArray);
+              
+              then!"Get the correct PUSH_DATA packet"
+              ({
+                  pushDataPacket.shouldNotBeNull();
+                  pushDataPacket.shouldBeInstanceOf!PushDataPacket();
+                  (cast(PushDataPacket) pushDataPacket).shouldEqual(expected);
+              });
+          });
+      });
+  });
+
+//  scenario!("Transformation an array of bytes that represending the PUSH_ACK packet uncorrectly into PUSH_ACK packet", ["gateway"])
+//  ({
+//      given!"Arrays of bytes that represending the PUSH_ACK packet uncorrectly"
+//      ({
+//          // incorrect packet type (forth byte should equal 1)
+//          ubyte[] incorrectPushAckArray1 = [2, uniform!ubyte, uniform!ubyte, 2];
+//          // incorrect protocol version (first byte should equal 2)
+//          ubyte[] incorrectPushAckArray2 = [1, uniform!ubyte, uniform!ubyte, 2];
+//          // incorrect array length (array length should equal 4)
+//          ubyte[] incorrectPushAckArray3 = [1, 2];
+//          
+//          when!"Function 'parse' is called"
+//          ({
+//              auto pushAckPacket1 = Lora.parse(incorrectPushAckArray1);
+//              auto pushAckPacket2 = Lora.parse(incorrectPushAckArray2);
+//              auto pushAckPacket3 = Lora.parse(incorrectPushAckArray3);
+//              
+//              then!"Get a return value different from the PUSH_ACK packet"
+//              ({
+//                  pushAckPacket1.shouldBeNull();
+//                  pushAckPacket2.shouldBeNull();
+//                  pushAckPacket3.shouldBeNull();
+//              });
+//          });
+//      });
+//  });  
 }
