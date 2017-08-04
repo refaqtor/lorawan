@@ -6,9 +6,6 @@
 
 module lorawan.gateway.pushdataparser;
 
-//TODO: remove
-import std.stdio;
-
 import lorawan.gateway.abstractpacket;
 import lorawan.gateway.lorawanexception;
 import lorawan.gateway.lorawantypes;
@@ -147,8 +144,9 @@ class PushDataParser : ParserInterface
               case 1 : crcStatus = CrcStatus.OK; break;
               case -1 : crcStatus = CrcStatus.FAIL; break;
               default: 
-                throw new LorawanException("field \"stat\" of rxpk structure from json object should have one of this values: " ~
-                  "\"0\" - NO_CRC, \"1\" - OK, \"-1\" - FAIL, but it has the value \"" ~ to!string(statByte) ~ "\"");
+                throw new LorawanException("field \"stat\" of rxpk structure from json object should have one of " ~
+                  "this values: \"0\" - NO_CRC, \"1\" - OK, \"-1\" - FAIL, but it has the value \"" ~
+                  to!string(statByte) ~ "\"");
             }
           }
           else
@@ -184,8 +182,9 @@ class PushDataParser : ParserInterface
             {              
               if(jsonRxpkArrayElement["datr"].type != JSON_TYPE.STRING)
               {
-                throw new LorawanException("field \"datr\" of rxpk structure from json object in \"LORA\" mode should " ~
-                  "have \"STRING\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["datr"].type) ~ "\" type!");
+                throw new LorawanException("field \"datr\" of rxpk structure from json object in " ~
+                  "\"LORA\" mode should have \"STRING\" type, but it have \"" ~
+                  to!string(jsonRxpkArrayElement["datr"].type) ~ "\" type!");
               }
               const string datrString = jsonRxpkArrayElement["datr"].str;
               switch(datrString)
@@ -212,14 +211,15 @@ class PushDataParser : ParserInterface
                 case "SF12BW250" : loraDatarate = LoraDatarate.SF_12_BW_250; break;
                 case "SF12BW500" : loraDatarate = LoraDatarate.SF_12_BW_500; break;
                 default: 
-                  throw new LorawanException("field \"datr\" of rxpk structure from json object in \"LORA\" mode should " ~
-                  "have \"SF\" value from 6 to 12 and one of this \"BW\" value: \"125\", \"250\" or \"500\" " ~
-                  "(for example: \"SF11BW250\"), but it has the value \"" ~ datrString ~ "\"");
+                  throw new LorawanException("field \"datr\" of rxpk structure from json object in \"LORA\" " ~
+                    "mode should have \"SF\" value from 6 to 12 and one of this \"BW\" value: \"125\", \"250\" " ~
+                    "or \"500\" (for example: \"SF11BW250\"), but it has the value \"" ~ datrString ~ "\"");
               }
             }
             else
             {
-              throw new LorawanException("rxpk structure from json object in \"LORA\" mode should have field \"datr\"!");
+              throw new LorawanException("rxpk structure from json object in \"LORA\" mode should " ~
+                "have field \"datr\"!");
             }
           }
           
@@ -227,8 +227,9 @@ class PushDataParser : ParserInterface
           {
             if(jsonRxpkArrayElement["codr"].type != JSON_TYPE.STRING)
             {
-              throw new LorawanException("field \"codr\" of rxpk structure from json object should have \"STRING\" type, " ~
-              "but it have \"" ~ to!string(jsonRxpkArrayElement["codr"].type) ~ "\" type!");
+              throw new LorawanException("field \"codr\" of rxpk structure from json object should " ~
+                "have \"STRING\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["codr"].type) ~
+                "\" type!");
             }
             const string codrString = jsonRxpkArrayElement["codr"].str;
             switch(codrString)
@@ -238,8 +239,9 @@ class PushDataParser : ParserInterface
               case "4/7" : cyclicCodingRate = CyclicCodingRate.CR_4_7; break;
               case "4/8" : cyclicCodingRate = CyclicCodingRate.CR_4_8; break;
               default: 
-                throw new LorawanException("field \"codr\" of rxpk structure from json object should have one of this values: " ~
-                "\"4/5\", \"4/6\", \"4/7\" or \"4/8\", but it has the value \"" ~ codrString ~ "\"");
+                throw new LorawanException("field \"codr\" of rxpk structure from json object should " ~
+                  "have one of this values: \"4/5\", \"4/6\", \"4/7\" or \"4/8\", but it has the value \"" ~
+                  codrString ~ "\"");
             }
           }
           else
@@ -301,8 +303,8 @@ class PushDataParser : ParserInterface
           {
             if(jsonRxpkArrayElement["data"].type != JSON_TYPE.STRING)
             {
-              throw new LorawanException("field \"data\" of rxpk structure from json object should have \"STRING\" type, " ~
-               "but it have \"" ~ to!string(jsonRxpkArrayElement["data"].type) ~"\" type!");
+              throw new LorawanException("field \"data\" of rxpk structure from json object should have " ~
+                "\"STRING\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["data"].type) ~"\" type!");
             }
             MacPacket macPacket = new MacPacket;
             macPacket.setData(jsonRxpkArrayElement["data"].str);
