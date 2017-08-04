@@ -256,20 +256,6 @@ class PushDataParser : ParserInterface
           newRxpk.setDatr(loraDatarate);
           newRxpk.setCodr(cyclicCodingRate);
           
-          if(("datr" in jsonRxpkArrayElement) !is null)
-          {
-            if(modulationIdentifier == ModulationIdentifier.FSK)
-            {
-              if(jsonRxpkArrayElement["datr"].type != JSON_TYPE.UINTEGER)
-              {
-                throw new LorawanException("field \"datr\" of rxpk structure from json object in \"FSK\" mode should " ~
-                  "have \"UINTEGER\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["datr"].type) ~ "\" type!");
-              }
-              const uint fskDatarate = to!uint(jsonRxpkArrayElement["datr"].uinteger);
-              newRxpk.setDatr(fskDatarate);
-            }
-          }
-          
           if(("time" in jsonRxpkArrayElement) !is null)
           {
             if(jsonRxpkArrayElement["time"].type != JSON_TYPE.STRING)
@@ -279,6 +265,29 @@ class PushDataParser : ParserInterface
             }
             SysTime time = SysTime.fromISOString(jsonRxpkArrayElement["time"].str);
             newRxpk.setTime(time);
+          }
+          
+
+          if(modulationIdentifier == ModulationIdentifier.FSK)
+          {
+            try
+            {
+              Nullable!uint datr = getValueFromJsonByKey!uint("datr", jsonRxpkArrayElement, Structures.RXPK);
+              if(!datr.isNull){ newRxpk.setDatr(datr); }
+            }
+            catch(LorawanException lorawanException)
+            {
+              if(lorawanException.msg == "field \"datr\" of rxpk structure from json object should have " ~
+                "\"UINTEGER\" type, but it have \"STRING\" type!")
+              {
+                throw new LorawanException("field \"datr\" of rxpk structure from json object in \"FSK\" mode should " ~
+                 "have \"UINTEGER\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["datr"].type) ~ "\" type!");
+              }
+            }
+            catch(Exception exception)
+            {
+              throw new Exception(exception.msg);
+            }
           }
           
           Nullable!ulong tmms = getValueFromJsonByKey!ulong("tmms", jsonRxpkArrayElement, Structures.RXPK);
@@ -358,7 +367,6 @@ class PushDataParser : ParserInterface
                 
         switch(realJsonType)
         {
-          case JSON_TYPE.STRING : result = to!T(jsonValue[key].str); break;
           case JSON_TYPE.INTEGER : result = to!T(jsonValue[key].integer); break;
           case JSON_TYPE.UINTEGER : result = to!T(jsonValue[key].uinteger); break;
           case JSON_TYPE.FLOAT : result = to!T(jsonValue[key].floating); break;

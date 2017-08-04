@@ -11,15 +11,6 @@ import lorawan.gateway.lora;
 import lorawan.gateway.macpacket;
 import checkit;
 
-ubyte[] getIncorrectPushDataArrayWithJson(string incorrectJsonString)
-{
-  JSONValue incorrectJsonValue = parseJSON(incorrectJsonString);
-  ubyte[] incorrectByteArray = cast(ubyte[]) toJSON(incorrectJsonValue);
-  ubyte[] notJsonPart = cast(ubyte[]) [2, uniform!ubyte, uniform!ubyte, 0, 1, 2, 3, 4, 5, 6, 7, 8];
-  ubyte[] incorrectPushDataArrayWithJson = notJsonPart ~ incorrectByteArray;
-  return incorrectPushDataArrayWithJson;
-}
-
 unittest
 {
   scenario!("Transformation PUSH_DATA packet to an array of bytes", ["gateway"])
@@ -481,7 +472,16 @@ unittest
           string incorrectJsonString22 = `{"rxpk" : [], "stat" : {}}`;
           //field "lsnr" of rxpk structure should have "FLOAT" type, not "STRING"!
           string incorrectJsonString23 = `{"rxpk" : [{"stat" : 1, "modu" : "LORA", "datr" : "SF12BW500", "codr" : "4/6", "lsnr" : "hello"}]}`;
-                   
+          
+          ubyte[] getIncorrectPushDataArrayWithJson(string incorrectJsonString)
+          {
+            JSONValue incorrectJsonValue = parseJSON(incorrectJsonString);
+            ubyte[] incorrectByteArray = cast(ubyte[]) toJSON(incorrectJsonValue);
+            ubyte[] notJsonPart = cast(ubyte[]) [2, uniform!ubyte, uniform!ubyte, 0, 1, 2, 3, 4, 5, 6, 7, 8];
+            ubyte[] incorrectPushDataArrayWithJson = notJsonPart ~ incorrectByteArray;
+            return incorrectPushDataArrayWithJson;
+          }
+               
           ubyte[] incorrectPushDataArrayWithJson1 = getIncorrectPushDataArrayWithJson(incorrectJsonString1);
           ubyte[] incorrectPushDataArrayWithJson2 = getIncorrectPushDataArrayWithJson(incorrectJsonString2);
           ubyte[] incorrectPushDataArrayWithJson3 = getIncorrectPushDataArrayWithJson(incorrectJsonString3);
@@ -589,6 +589,145 @@ unittest
                   
                   (Lora.parse(incorrectPushDataArrayWithJson23)).shouldThrowWithMessage("field \"lsnr\" of rxpk structure " ~
                     "from json object should have \"FLOAT\" type, but it have \"STRING\" type!");
+              });
+          });
+      });
+  });
+  
+  scenario!("Transformation an arrays of bytes that represending the PUSH_DATA packet correctly and have different " ~
+    "CRC status into PUSH_DATA packet", ["gateway"])
+  ({
+      given!"Array of bytes that represending the PUSH_DATA packet correctly and have different CRC status"
+      ({
+          when!"Function 'parse' is called"
+          ({
+              then!"Get the correct PUSH_DATA packet"
+              ({
+                  void verifyTheCorrectnessOfParsingForDifferentValue(CrcStatus crcStatus)
+                  {
+                    PushDataPacket expected = new PushDataPacket;
+                    Rxpk rxpkStruct;
+                    rxpkStruct.setStat(crcStatus);
+                    expected.setRxpkArray([rxpkStruct]);
+                    ubyte[] pushDataArray = expected.toByteArray;
+                    auto pushDataPacket = Lora.parse(pushDataArray);
+                    pushDataPacket.shouldNotBeNull();
+                    pushDataPacket.shouldBeInstanceOf!PushDataPacket();
+                    PushDataPacket gotPushDataPacket = cast(PushDataPacket)pushDataPacket;
+                    gotPushDataPacket.shouldEqual(expected);
+                  }
+                  
+                  verifyTheCorrectnessOfParsingForDifferentValue(CrcStatus.OK);
+                  verifyTheCorrectnessOfParsingForDifferentValue(CrcStatus.FAIL);
+                  verifyTheCorrectnessOfParsingForDifferentValue(CrcStatus.NO_CRC);
+              });
+          });
+      });
+  });
+  
+  scenario!("Transformation an arrays of bytes that represending the PUSH_DATA packet correctly and have different " ~
+    "datr value in \"LORA\" mode into PUSH_DATA packet", ["gateway"])
+  ({
+      given!"Array of bytes that represending the PUSH_DATA packet correctly and have datr value in \"LORA\" mode"
+      ({  
+          when!"Function 'parse' is called"
+          ({  
+              then!"Get the correct PUSH_DATA packet"
+              ({
+                  void verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate loraDatarate)
+                  {
+                    PushDataPacket expected = new PushDataPacket;
+                    Rxpk rxpkStruct;
+                    rxpkStruct.setModu(ModulationIdentifier.LORA);
+                    rxpkStruct.setDatr(loraDatarate);
+                    expected.setRxpkArray([rxpkStruct]);
+                    ubyte[] pushDataArray = expected.toByteArray;
+                    auto pushDataPacket = Lora.parse(pushDataArray);
+                    pushDataPacket.shouldNotBeNull();
+                    pushDataPacket.shouldBeInstanceOf!PushDataPacket();
+                    PushDataPacket gotPushDataPacket = cast(PushDataPacket)pushDataPacket;
+                    gotPushDataPacket.shouldEqual(expected);
+                  }
+                  
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_6_BW_125);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_6_BW_250);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_6_BW_500);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_7_BW_125);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_7_BW_250);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_7_BW_500);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_8_BW_125);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_8_BW_250);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_8_BW_500);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_9_BW_125);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_9_BW_250);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_9_BW_500);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_10_BW_125);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_10_BW_250);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_10_BW_500);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_11_BW_125);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_11_BW_250);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_11_BW_500);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_12_BW_125);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_12_BW_250);
+                  verifyTheCorrectnessOfParsingForDifferentValue(LoraDatarate.SF_12_BW_500);
+              });
+          });
+      });
+  });
+  
+  scenario!("Transformation an arrays of bytes that represending the PUSH_DATA packet correctly and have different " ~
+    "cyclic coding rate into PUSH_DATA packet", ["gateway"])
+  ({
+      given!"Array of bytes that represending the PUSH_DATA packet correctly and have different cyclic coding rate"
+      ({
+          when!"Function 'parse' is called"
+          ({
+              then!"Get the correct PUSH_DATA packet"
+              ({
+                  void verifyTheCorrectnessOfParsingForDifferentValue(CyclicCodingRate cyclicCodingRate)
+                  {
+                    PushDataPacket expected = new PushDataPacket;
+                    Rxpk rxpkStruct;
+                    rxpkStruct.setCodr(cyclicCodingRate);
+                    expected.setRxpkArray([rxpkStruct]);
+                    ubyte[] pushDataArray = expected.toByteArray;
+                    auto pushDataPacket = Lora.parse(pushDataArray);
+                    pushDataPacket.shouldNotBeNull();
+                    pushDataPacket.shouldBeInstanceOf!PushDataPacket();
+                    PushDataPacket gotPushDataPacket = cast(PushDataPacket)pushDataPacket;
+                    gotPushDataPacket.shouldEqual(expected);
+                  }
+                  
+                  verifyTheCorrectnessOfParsingForDifferentValue(CyclicCodingRate.CR_4_5);
+                  verifyTheCorrectnessOfParsingForDifferentValue(CyclicCodingRate.CR_4_6);
+                  verifyTheCorrectnessOfParsingForDifferentValue(CyclicCodingRate.CR_4_7);
+                  verifyTheCorrectnessOfParsingForDifferentValue(CyclicCodingRate.CR_4_8);
+              });
+          });
+      });
+  });
+  
+  scenario!("Transformation an arrays of bytes that represending the PUSH_DATA packet in \"FSK\" mode correctly", ["gateway"])
+  ({
+      given!"Array of bytes that represending the PUSH_DATA packet in \"FSK\" mode correctly"
+      ({
+          PushDataPacket expected = new PushDataPacket;
+          Rxpk rxpkStruct;
+          rxpkStruct.setModu(ModulationIdentifier.FSK);
+          rxpkStruct.setDatr(3_294_967_295);
+          expected.setRxpkArray([rxpkStruct]);          
+          ubyte[] pushDataArray = expected.toByteArray;
+          
+          when!"Function 'parse' is called"
+          ({
+              auto pushDataPacket = Lora.parse(pushDataArray);
+              
+              then!"Get the correct PUSH_DATA packet"
+              ({
+                  pushDataPacket.shouldNotBeNull();
+                  pushDataPacket.shouldBeInstanceOf!PushDataPacket();
+                  PushDataPacket gotPushDataPacket = cast(PushDataPacket)pushDataPacket;
+                  gotPushDataPacket.shouldEqual(expected);  
               });
           });
       });
