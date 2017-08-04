@@ -11,6 +11,11 @@ import std.exception;
 /// Class is used to generate exceptions associated with the lorawan library
 class LorawanException : Exception
 {
+  /** Creates a new instance of Exception.
+    
+    Params:
+      msg = lorawan exception message  
+  */
   this(string msg, string file = __FILE__, size_t line = __LINE__)
   {
     super(msg, file, line);

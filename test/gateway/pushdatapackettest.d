@@ -363,7 +363,6 @@ unittest
           rxpkStruct.setStat(CrcStatus.OK);
           rxpkStruct.setModu(ModulationIdentifier.LORA);
           rxpkStruct.setDatr(LoraDatarate.SF_7_BW_125);
-          rxpkStruct.setDatr(500000);
           rxpkStruct.setCodr(CyclicCodingRate.CR_4_6);
           rxpkStruct.setRssi(-35);
           rxpkStruct.setLsnr(5.1);
@@ -397,9 +396,16 @@ unittest
               
               then!"Get the correct PUSH_DATA packet"
               ({
-                  pushDataPacket.shouldNotBeNull();
                   pushDataPacket.shouldBeInstanceOf!PushDataPacket();
-                  (cast(PushDataPacket) pushDataPacket).shouldEqual(expected);
+                  
+                  PushDataPacket gotPushDataPacket = cast(PushDataPacket)pushDataPacket;
+                  
+                  (gotPushDataPacket.getGatewayID).shouldEqual(expected.getGatewayID);
+                  (gotPushDataPacket.getStatStruct).shouldEqual(expected.getStatStruct);
+                  (gotPushDataPacket.getProtocolVersion).shouldEqual(expected.getProtocolVersion);
+                  (gotPushDataPacket.getToken).shouldEqual(expected.getToken);
+                  (gotPushDataPacket.getPacketType).shouldEqual(expected.getPacketType);
+                  (gotPushDataPacket.getRxpkArray).shouldEqual(expected.getRxpkArray);
               });
           });
       });

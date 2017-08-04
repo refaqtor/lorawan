@@ -160,7 +160,6 @@ struct Rxpk
         datrs = value used to initialize LoRa datarate identifier
     */
     void setDatr(LoraDatarate datrs){ _datrs = datrs; }
-
     
     /**Get FSK datarate (unsigned integer, in bits per second)
       
@@ -175,7 +174,6 @@ struct Rxpk
         datrn = value used to initialize FSK datarate
     */
     void setDatr(uint datrn){ _datrn = datrn; }
-
    
     /**Get LoRa ECC coding rate identifier
       

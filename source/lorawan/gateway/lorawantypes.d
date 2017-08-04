@@ -6,7 +6,29 @@
 
 module lorawan.gateway.lorawantypes;
 
+import std.json;
+
 alias GatewayID = ubyte[8];
+
+//TODO:add docs
+static this()
+{
+  dlangToJsonTypes =
+  [
+    "string" : JSON_TYPE.STRING,
+    "byte" : JSON_TYPE.INTEGER,
+    "short" : JSON_TYPE.INTEGER,
+    "int" : JSON_TYPE.INTEGER,
+    "long" : JSON_TYPE.INTEGER,
+    "ubyte" : JSON_TYPE.UINTEGER,
+    "ushort" : JSON_TYPE.UINTEGER,
+    "uint" : JSON_TYPE.UINTEGER,
+    "ulong" : JSON_TYPE.UINTEGER,
+    "float" : JSON_TYPE.FLOAT,
+    "double" : JSON_TYPE.FLOAT,
+    "real" : JSON_TYPE.FLOAT
+  ];
+}
 
 /// Enumeration of protocol versions
 enum ProtocolVersion: ubyte
@@ -105,3 +127,6 @@ enum CyclicCodingRate : string
   CR_4_7 = "4/7",
   CR_4_8 = "4/8"
 }
+
+///Associative array that connects the types of 'd' language and types of json format
+immutable JSON_TYPE[string] dlangToJsonTypes;
