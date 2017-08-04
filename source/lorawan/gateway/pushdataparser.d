@@ -6,6 +6,9 @@
 
 module lorawan.gateway.pushdataparser;
 
+//TODO: remove
+import std.stdio;
+
 import lorawan.gateway.abstractpacket;
 import lorawan.gateway.lorawanexception;
 import lorawan.gateway.lorawantypes;
@@ -30,9 +33,17 @@ class PushDataParser : ParserInterface
   */
   AbstractPacket parse(in ubyte[] data)
   {
-    if(data.length <= 12){ return null; }
-    else if(data[0] != ProtocolVersion.VERSION_2){ return null; }
-    else if(data[3] != PacketType.PUSH_DATA){ return null; }
+    if(data.length <= 12)
+    { 
+      return null;
+    }
+    if(data[0] != ProtocolVersion.VERSION_2){ 
+      return null;
+    }
+    if(data[3] != PacketType.PUSH_DATA)
+    {
+      return null;
+    }
     else
     {
       PushDataPacket result = new PushDataPacket;
@@ -41,22 +52,26 @@ class PushDataParser : ParserInterface
       Stat statStructure;
       
       JSONValue jsonValue = parseJSON(cast(string) data[12..$]);
-      if(jsonValue.isNull()){ return null; }
+      
+      if(jsonValue.isNull())
+      { 
+        throw new LorawanException("byte array should contain json object, " ~
+          "but recieved array contain only \"null\" json object!");
+      }
       
       // jsonValue parsing...
       if((("rxpk" in jsonValue) is null) && (("stat" in jsonValue) is null))
       { 
-        throw new LorawanException("json object should contain at least on of 
-        this: \"rxpk array\" or \"stat structure\"!");
+        throw new LorawanException("json object should contain at least on of " ~
+          "this: \"rxpk array\" or \"stat structure\"!");
       }
       
       if(("stat" in jsonValue) !is null)
       {
         if(jsonValue["stat"].type != JSON_TYPE.OBJECT)
         {
-          throw new LorawanException("field \"stat\" of json object
-           should have \"OBJECT\" type, but it have \"" ~
-            jsonValue["stat"].type ~ "\" type!");
+          throw new LorawanException("field \"stat\" of json object " ~
+            "should have \"OBJECT\" type, but it have \"" ~ to!string(jsonValue["stat"].type) ~ "\" type!");
         }
         
         // parsing of the stat structure...
@@ -66,8 +81,8 @@ class PushDataParser : ParserInterface
         {
           if(jsonStatStructure["time"].type != JSON_TYPE.STRING)
           {
-            throw new LorawanException("field \"time\" of stat structure from json object
-            should have \"STRING\" type, but it have \"" ~ jsonStatStructure["time"].type ~"\" type!");
+            throw new LorawanException("field \"time\" of stat structure from json object " ~
+              "should have \"STRING\" type, but it have \"" ~ to!string(jsonStatStructure["time"].type) ~ "\" type!");
           }
           SysTime time = SysTime.fromISOExtString(jsonStatStructure["time"].str);
           statStructure.setTime(time);
@@ -99,7 +114,7 @@ class PushDataParser : ParserInterface
         if(jsonValue["rxpk"].type != JSON_TYPE.ARRAY)
         {
           throw new LorawanException("field \"rxpk\" of json object should have \"ARRAY\" type, but it have \"" ~
-            jsonValue["rxpk"].type ~ "\" type!");
+            to!string(jsonValue["rxpk"].type) ~ "\" type!");
         }
         
         // parsing of the rxpk array...
@@ -108,8 +123,8 @@ class PushDataParser : ParserInterface
         {
           if(jsonRxpkArrayElement.type != JSON_TYPE.OBJECT)
           {
-            throw new LorawanException("rxpk array should can only contain elements with \"OBJECT\" type,
-            but it have element with \"" ~ jsonRxpkArrayElement.type ~ "\" type!");
+            throw new LorawanException("rxpk array should can only contain elements with \"OBJECT\" type, " ~
+              "but it have element with \"" ~ to!string(jsonRxpkArrayElement.type) ~ "\" type!");
           }
           
           //These fields have an enumeration type and they are mandatory in the rxpk structure
@@ -122,8 +137,8 @@ class PushDataParser : ParserInterface
           {
             if(jsonRxpkArrayElement["stat"].type != JSON_TYPE.INTEGER)
             {
-              throw new LorawanException("field \"stat\" of rxpk structure from json object
-              should have \"INTEGER\" type, but it have \"" ~ jsonRxpkArrayElement["stat"].type ~ "\" type!");
+              throw new LorawanException("field \"stat\" of rxpk structure from json object should have \"INTEGER\" " ~
+                "type, but it have \"" ~ to!string(jsonRxpkArrayElement["stat"].type) ~ "\" type!");
             }
             byte statByte = to!byte(jsonRxpkArrayElement["stat"].integer);
             switch(statByte)
@@ -132,8 +147,8 @@ class PushDataParser : ParserInterface
               case 1 : crcStatus = CrcStatus.OK; break;
               case -1 : crcStatus = CrcStatus.FAIL; break;
               default: 
-                throw new LorawanException("field \"stat\" of rxpk structure from json object should have one of this values:
-                \"0\" - NO_CRC, \"1\" - OK, \"-1\" - FAIL, but it has the value \"" ~ to!string(statByte) ~ "\"");
+                throw new LorawanException("field \"stat\" of rxpk structure from json object should have one of this values: " ~
+                  "\"0\" - NO_CRC, \"1\" - OK, \"-1\" - FAIL, but it has the value \"" ~ to!string(statByte) ~ "\"");
             }
           }
           else
@@ -145,8 +160,8 @@ class PushDataParser : ParserInterface
           {
             if(jsonRxpkArrayElement["modu"].type != JSON_TYPE.STRING)
             {
-              throw new LorawanException("field \"modu\" of rxpk structure from json object
-              should have \"STRING\" type, but it have \"" ~ jsonRxpkArrayElement["modu"].type ~ "\" type!");
+              throw new LorawanException("field \"modu\" of rxpk structure from json object should have " ~
+                "\"STRING\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["modu"].type) ~ "\" type!");
             }
             const string moduString = jsonRxpkArrayElement["modu"].str;
             switch(moduString)
@@ -154,8 +169,8 @@ class PushDataParser : ParserInterface
               case "LORA" : modulationIdentifier = ModulationIdentifier.LORA; break;
               case "FSK" : modulationIdentifier = ModulationIdentifier.FSK; break;
               default: 
-                throw new LorawanException("field \"modu\" of rxpk structure from json object should have one of this values:
-                \"LORA\" or \"FSK\", but it has the value \"" ~ moduString ~ "\"");
+                throw new LorawanException("field \"modu\" of rxpk structure from json object should have " ~
+                  "one of this values: \"LORA\" or \"FSK\", but it has the value \"" ~ moduString ~ "\"");
             }
           }
           else
@@ -163,14 +178,14 @@ class PushDataParser : ParserInterface
             throw new LorawanException("rxpk structure from json object should have field \"modu\"!");
           }
           
-          if(("datr" in jsonRxpkArrayElement) !is null)
+          if(modulationIdentifier == ModulationIdentifier.LORA)
           {
-            if(modulationIdentifier == ModulationIdentifier.LORA)
+            if(("datr" in jsonRxpkArrayElement) !is null)
             {              
               if(jsonRxpkArrayElement["datr"].type != JSON_TYPE.STRING)
               {
-                throw new LorawanException("field \"datr\" of rxpk structure from json object in \"LORA\" mode
-                should have \"STRING\" type, but it have \"" ~ jsonRxpkArrayElement["datr"].type ~ "\" type!");
+                throw new LorawanException("field \"datr\" of rxpk structure from json object in \"LORA\" mode should " ~
+                  "have \"STRING\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["datr"].type) ~ "\" type!");
               }
               const string datrString = jsonRxpkArrayElement["datr"].str;
               switch(datrString)
@@ -197,23 +212,23 @@ class PushDataParser : ParserInterface
                 case "SF12BW250" : loraDatarate = LoraDatarate.SF_12_BW_250; break;
                 case "SF12BW500" : loraDatarate = LoraDatarate.SF_12_BW_500; break;
                 default: 
-                  throw new LorawanException("field \"datr\" of rxpk structure from json object in \"LORA\" mode should 
-                  have \"SF\" value from 6 to 12 and one of this \"BW\" value: '125, '250' or '500'
-                  (for example: \"SF11BW250\"), but it has the value \"" ~ datrString ~ "\"");
+                  throw new LorawanException("field \"datr\" of rxpk structure from json object in \"LORA\" mode should " ~
+                  "have \"SF\" value from 6 to 12 and one of this \"BW\" value: \"125\", \"250\" or \"500\" " ~
+                  "(for example: \"SF11BW250\"), but it has the value \"" ~ datrString ~ "\"");
               }
             }
-          }
-          else
-          {
-            throw new LorawanException("rxpk structure from json object should have field \"datr\"!");
+            else
+            {
+              throw new LorawanException("rxpk structure from json object in \"LORA\" mode should have field \"datr\"!");
+            }
           }
           
           if(("codr" in jsonRxpkArrayElement) !is null)
           {
             if(jsonRxpkArrayElement["codr"].type != JSON_TYPE.STRING)
             {
-              throw new LorawanException("field \"codr\" of rxpk structure from json object should have \"STRING\" type,
-              but it have \"" ~ jsonRxpkArrayElement["codr"].type ~ "\" type!");
+              throw new LorawanException("field \"codr\" of rxpk structure from json object should have \"STRING\" type, " ~
+              "but it have \"" ~ to!string(jsonRxpkArrayElement["codr"].type) ~ "\" type!");
             }
             const string codrString = jsonRxpkArrayElement["codr"].str;
             switch(codrString)
@@ -223,8 +238,8 @@ class PushDataParser : ParserInterface
               case "4/7" : cyclicCodingRate = CyclicCodingRate.CR_4_7; break;
               case "4/8" : cyclicCodingRate = CyclicCodingRate.CR_4_8; break;
               default: 
-                throw new LorawanException("field \"codr\" of rxpk structure from json object should have one of this values:
-                \"4/5\", \"4/6\", \"4/7\" or \"4/8\", but it has the value \"" ~ codrString ~ "\"");
+                throw new LorawanException("field \"codr\" of rxpk structure from json object should have one of this values: " ~
+                "\"4/5\", \"4/6\", \"4/7\" or \"4/8\", but it has the value \"" ~ codrString ~ "\"");
             }
           }
           else
@@ -242,11 +257,11 @@ class PushDataParser : ParserInterface
           if(("datr" in jsonRxpkArrayElement) !is null)
           {
             if(modulationIdentifier == ModulationIdentifier.FSK)
-            {             
+            {
               if(jsonRxpkArrayElement["datr"].type != JSON_TYPE.UINTEGER)
               {
-                throw new LorawanException("field \"datr\" of rxpk structure from json object in \"FSK\" mode should
-                have \"UINTEGER\" type, but it have \"" ~ jsonRxpkArrayElement["datr"].type ~ "\" type!");
+                throw new LorawanException("field \"datr\" of rxpk structure from json object in \"FSK\" mode should " ~
+                  "have \"UINTEGER\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["datr"].type) ~ "\" type!");
               }
               const uint fskDatarate = to!uint(jsonRxpkArrayElement["datr"].uinteger);
               newRxpk.setDatr(fskDatarate);
@@ -257,8 +272,8 @@ class PushDataParser : ParserInterface
           {
             if(jsonRxpkArrayElement["time"].type != JSON_TYPE.STRING)
             {
-              throw new LorawanException("field \"time\" of rxpk structure from json object should have \"STRING\"
-              type, but it have \"" ~ jsonRxpkArrayElement["time"].type ~"\" type!");
+              throw new LorawanException("field \"time\" of rxpk structure from json object should have \"STRING\" " ~
+              "type, but it have \"" ~ to!string(jsonRxpkArrayElement["time"].type) ~"\" type!");
             }
             SysTime time = SysTime.fromISOString(jsonRxpkArrayElement["time"].str);
             newRxpk.setTime(time);
@@ -286,8 +301,8 @@ class PushDataParser : ParserInterface
           {
             if(jsonRxpkArrayElement["data"].type != JSON_TYPE.STRING)
             {
-              throw new LorawanException("field \"data\" of rxpk structure from json object should have \"STRING\" type,
-               but it have \"" ~ jsonRxpkArrayElement["data"].type ~"\" type!");
+              throw new LorawanException("field \"data\" of rxpk structure from json object should have \"STRING\" type, " ~
+               "but it have \"" ~ to!string(jsonRxpkArrayElement["data"].type) ~"\" type!");
             }
             MacPacket macPacket = new MacPacket;
             macPacket.setData(jsonRxpkArrayElement["data"].str);
@@ -300,8 +315,8 @@ class PushDataParser : ParserInterface
       
       if(statStructure.isEmpty() && rxpkArray.length == 0)
       {
-        throw new LorawanException("json object should contain one of this:
-        not empty stat structure or not empty rxpk array!");
+        throw new LorawanException("json object should contain one of this: "~
+        "\"not empty stat structure\" or \"not empty rxpk array\"!");
       }
       
       if(!statStructure.isEmpty()) { result.setStatStruct(statStructure); }
