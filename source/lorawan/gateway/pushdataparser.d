@@ -290,8 +290,8 @@ class PushDataParser : ParserInterface
             }
           }
           
-          import std.stdio;
-          if(("tmms" in jsonRxpkArrayElement) !is null)writeln(to!string(jsonRxpkArrayElement["tmms"].type));
+//          import std.stdio;
+//          if(("tmms" in jsonRxpkArrayElement) !is null)writeln(to!string(jsonRxpkArrayElement["tmms"].type));
           
           Nullable!ulong tmms = getValueFromJsonByKey!ulong("tmms", jsonRxpkArrayElement, Structures.RXPK);
           Nullable!uint tmst = getValueFromJsonByKey!uint("tmst", jsonRxpkArrayElement, Structures.RXPK);

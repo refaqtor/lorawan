@@ -355,7 +355,7 @@ unittest
           data.setData("-DS4CGaDCdG+48eJNM3Vai-zDpsR71Pn9CPA9uCON84");
           
           rxpkStruct.setTime(sysTime);
-          rxpkStruct.setTmms(ulong.max);
+          rxpkStruct.setTmms(6164);
           rxpkStruct.setTmst(3512348611);
           rxpkStruct.setChan(2);
           rxpkStruct.setRfch(0);
