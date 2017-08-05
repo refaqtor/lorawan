@@ -74,17 +74,7 @@ class PushDataParser : ParserInterface
         // parsing of the stat structure...
         JSONValue jsonStatStructure = jsonValue["stat"];
         
-        if(("time" in jsonStatStructure) !is null)
-        {
-          if(jsonStatStructure["time"].type != JSON_TYPE.STRING)
-          {
-            throw new LorawanException("field \"time\" of stat structure from json object " ~
-              "should have \"STRING\" type, but it have \"" ~ to!string(jsonStatStructure["time"].type) ~ "\" type!");
-          }
-          SysTime time = SysTime.fromISOExtString(jsonStatStructure["time"].str);
-          statStructure.setTime(time);
-        }
-        
+        Nullable!SysTime time = getStatTimeFromJson(jsonStatStructure);
         Nullable!double latn = getValueFromJsonByKey!double("latn", jsonStatStructure, Structures.STAT);
         Nullable!double late = getValueFromJsonByKey!double("late", jsonStatStructure, Structures.STAT);
         Nullable!int alti = getValueFromJsonByKey!int("alti", jsonStatStructure, Structures.STAT);
@@ -95,6 +85,7 @@ class PushDataParser : ParserInterface
         Nullable!uint dwnb = getValueFromJsonByKey!uint("dwnb", jsonStatStructure, Structures.STAT);
         Nullable!uint txnb = getValueFromJsonByKey!uint("txnb", jsonStatStructure, Structures.STAT);
         
+        if(!time.isNull){ statStructure.setTime(time); }
         if(!latn.isNull){ statStructure.setLatn(latn); }
         if(!late.isNull){ statStructure.setLate(late); }
         if(!alti.isNull){ statStructure.setAlti(alti); }
@@ -116,6 +107,7 @@ class PushDataParser : ParserInterface
         
         // parsing of the rxpk array...
         JSONValue jsonRxpkArray = jsonValue["rxpk"];
+        
         foreach(JSONValue jsonRxpkArrayElement; jsonRxpkArray.array)
         { 
           if(jsonRxpkArrayElement.type != JSON_TYPE.OBJECT)
@@ -124,52 +116,18 @@ class PushDataParser : ParserInterface
               "but it have element with \"" ~ to!string(jsonRxpkArrayElement.type) ~ "\" type!");
           }
           
-          //These fields have an enumeration type and they are mandatory in the rxpk structure
+          // These fields have an enumeration type and they are mandatory in the rxpk structure
           Nullable!CrcStatus crcStatus;
           Nullable!ModulationIdentifier modulationIdentifier;
           Nullable!LoraDatarate loraDatarate;
           Nullable!CyclicCodingRate cyclicCodingRate;
           
-          // get CRC status
           crcStatus = getEnumValueFromJsonByKey!(byte, CrcStatus)("stat", jsonRxpkArrayElement, Structures.RXPK);
-          // get modulation identifier (LORA or FSK)
           modulationIdentifier = getEnumValueFromJsonByKey!(string, ModulationIdentifier)("modu", jsonRxpkArrayElement, Structures.RXPK);
-          // get datarate in LORA mode
-          if(modulationIdentifier == ModulationIdentifier.LORA)
-          {
-            try
-            {
-              loraDatarate = getEnumValueFromJsonByKey!(string, LoraDatarate)("datr", jsonRxpkArrayElement, Structures.RXPK);
-            }
-            catch(LorawanException lorawanException)
-            {
-              if(lorawanException.msg == "field \"datr\" of rxpk structure from json object should have " ~
-                "\"STRING\" type, but it have \"INTEGER\" type!")
-              {
-                throw new LorawanException("field \"datr\" of rxpk structure from json object in \"LORA\" mode should " ~
-                 "have \"STRING\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["datr"].type) ~ "\" type!");
-              }
-              else
-              {
-                if(lorawanException.msg == "rxpk structure from json object should have field \"datr\"!")
-                {
-                  throw new LorawanException("rxpk structure from json object in \"LORA\" mode should have field \"datr\"!");
-                }
-                else
-                {
-                  throw new LorawanException(lorawanException.msg);
-                }  
-              }
-            }
-            catch(Exception exception)
-            {
-              throw new Exception(exception.msg);
-            }
-          }
-          // get cyclic coding rate 
+          loraDatarate = getLoraDatarate(modulationIdentifier, jsonRxpkArrayElement); 
           cyclicCodingRate = getEnumValueFromJsonByKey!(string, CyclicCodingRate)("codr", jsonRxpkArrayElement, Structures.RXPK);
           
-          // get the optional fields of the rxpk structure
+          // Get the optional fields of the rxpk structure
           Rxpk newRxpk;
           
           if(("time" in jsonRxpkArrayElement) !is null)
@@ -286,6 +244,7 @@ class PushDataParser : ParserInterface
                 
         switch(realJsonType)
         {
+          case JSON_TYPE.STRING : result = to!T(jsonValue[key].str); break;
           case JSON_TYPE.INTEGER : result = to!T(jsonValue[key].integer); break;
           case JSON_TYPE.UINTEGER : result = to!T(jsonValue[key].uinteger); break;
           case JSON_TYPE.FLOAT : result = to!T(jsonValue[key].floating); break;
@@ -337,7 +296,6 @@ class PushDataParser : ParserInterface
         }
         enumString ~= enumStringArray[enumStringArray.length - 2] ~ " or " ~ enumStringArray[enumStringArray.length - 1];
         
-        
         E enumValue = cast(E)(valueFromJson);
         if(to!string(enumValue) != "cast(" ~ E.stringof ~ ")" ~ to!string(valueFromJson))
         {
@@ -348,19 +306,6 @@ class PushDataParser : ParserInterface
           throw new LorawanException("field \"" ~ key ~ "\" of " ~ structureName ~ " structure from json object should have " ~
             "one of this values: " ~ enumString ~ ", but it has the value \"" ~ to!string(valueFromJson) ~ "\"");
         }
-        
-//        try
-//        {
-//          E enumValue = to!E(valueFromJson);
-//          result = enumValue;
-//        }
-//        catch(Exception exception)
-//        {
-//          import std.stdio;
-//          writeln(valueFromJson);
-//          throw new LorawanException("field \"" ~ key ~ "\" of " ~ structureName ~ " structure from json object should have " ~
-//            "one of this values: " ~ enumString ~ ", but it has the value \"" ~ to!string(valueFromJson) ~ "\"");
-//        }
       }
       else
       {
@@ -368,5 +313,61 @@ class PushDataParser : ParserInterface
       }
       
       return result;
+    }
+    
+    Nullable!SysTime getStatTimeFromJson(JSONValue jsonStatStructure)
+    {
+      Nullable!SysTime result;
+      
+      if(("time" in jsonStatStructure) !is null)
+      {
+        if(jsonStatStructure["time"].type != JSON_TYPE.STRING)
+        {
+          throw new LorawanException("field \"time\" of stat structure from json object " ~
+            "should have \"STRING\" type, but it have \"" ~ to!string(jsonStatStructure["time"].type) ~ "\" type!");
+        }
+        result = SysTime.fromISOExtString(jsonStatStructure["time"].str);
+      }
+      
+      return result;
+    }
+    
+    Nullable!LoraDatarate getLoraDatarate(ModulationIdentifier modulationIdentifier, JSONValue jsonRxpkArrayElement)
+    {
+      Nullable!LoraDatarate result;
+      
+      if(modulationIdentifier == ModulationIdentifier.LORA)
+      {
+        try
+        {
+          result = getEnumValueFromJsonByKey!(string, LoraDatarate)("datr", jsonRxpkArrayElement, Structures.RXPK);
+        }
+        catch(LorawanException lorawanException)
+        {
+          if(lorawanException.msg == "field \"datr\" of rxpk structure from json object should have " ~
+            "\"STRING\" type, but it have \"INTEGER\" type!")
+          {
+            throw new LorawanException("field \"datr\" of rxpk structure from json object in \"LORA\" mode should " ~
+              "have \"STRING\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["datr"].type) ~ "\" type!");
+          }
+          else
+          {
+            if(lorawanException.msg == "rxpk structure from json object should have field \"datr\"!")
+            {
+              throw new LorawanException("rxpk structure from json object in \"LORA\" mode should have field \"datr\"!");
+            }
+            else
+            {
+               throw new LorawanException(lorawanException.msg);
+            }  
+          }
+        }
+        catch(Exception exception)
+        {
+          throw new Exception(exception.msg);
+        }
+      }  
+           
+      return result; 
     }
 }
