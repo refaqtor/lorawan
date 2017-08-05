@@ -577,11 +577,11 @@ class PushDataPacket : AbstractPacket
         MacPacket data = rxpkStruct.getData();
        
         if(!time.isNull){ rxpkValue["time"] = time.toISOString();}
-        if(!tmms.isNull){ rxpkValue["tmms"] = tmms;}
-        if(!tmst.isNull){ rxpkValue["tmst"] = tmst;}
-        if(!freq.isNull){ rxpkValue["freq"] = cast(double)freq;}
-        if(!chan.isNull){ rxpkValue["chan"] = chan;}
-        if(!rfch.isNull){ rxpkValue["rfch"] = rfch;}
+        if(!tmms.isNull){ rxpkValue["tmms"] = cast(ulong) tmms;}
+        if(!tmst.isNull){ rxpkValue["tmst"] = cast(uint) tmst;}
+        if(!freq.isNull){ rxpkValue["freq"] = cast(double) freq;}
+        if(!chan.isNull){ rxpkValue["chan"] = cast(ubyte) chan;}
+        if(!rfch.isNull){ rxpkValue["rfch"] = cast(uint) rfch;}
         rxpkValue["stat"] = cast(byte)stat;
         rxpkValue["modu"] = modu;
         
@@ -595,14 +595,14 @@ class PushDataPacket : AbstractPacket
           {
             if(!datrn.isNull)
             { 
-              rxpkValue["datr"] = datrn;
+              rxpkValue["datr"] = cast(uint)datrn;
             }
           }
         }
         rxpkValue["codr"] = codr;
-        if(!rssi.isNull){ rxpkValue["rssi"] = rssi;}
+        if(!rssi.isNull){ rxpkValue["rssi"] = cast(short) rssi;}
         if(!lsnr.isNull){ rxpkValue["lsnr"] = cast(float) lsnr;}
-        if(!size.isNull){ rxpkValue["size"] = size;}
+        if(!size.isNull){ rxpkValue["size"] = cast(uint) size;}
         if(data !is null){ rxpkValue["data"] = data.getData();}
         if(!rxpkValue.isNull())
         {
@@ -633,13 +633,13 @@ class PushDataPacket : AbstractPacket
         if(!time.isNull){ statVal["time"] = time.toISOExtString();}
         if(!latn.isNull){ statVal["latn"] = cast(double) latn;}
         if(!late.isNull){ statVal["late"] = cast(double) late;}
-        if(!alti.isNull){ statVal["alti"] = alti;}
-        if(!rxnb.isNull){ statVal["rxnb"] = rxnb;}
-        if(!rxok.isNull){ statVal["rxok"] = rxok;}
-        if(!rxfw.isNull){ statVal["rxfw"] = rxfw;}
-        if(!ackr.isNull){ statVal["ackr"] = cast(float) ackr;}
-        if(!dwnb.isNull){ statVal["dwnb"] = dwnb;}
-        if(!txnb.isNull){ statVal["txnb"] = txnb;}
+        if(!alti.isNull){ statVal["alti"] = cast(int) alti;}
+        if(!rxnb.isNull){ statVal["rxnb"] = cast(ulong) rxnb;}
+        if(!rxok.isNull){ statVal["rxok"] = cast(ulong) rxok;}
+        if(!rxfw.isNull){ statVal["rxfw"] = cast(ulong) rxfw;}
+        if(!ackr.isNull){ statVal["ackr"] = cast(double) ackr;}
+        if(!dwnb.isNull){ statVal["dwnb"] = cast(uint) dwnb;}
+        if(!txnb.isNull){ statVal["txnb"] = cast(uint) txnb;}
       }
       
       return statVal;

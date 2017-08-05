@@ -31,7 +31,7 @@ unittest
           data.setData("-DS4CGaDCdG+48eJNM3Vai-zDpsR71Pn9CPA9uCON84");
           
           rxpkStruct.setTime(sysTime);
-          rxpkStruct.setTmms(6466516);
+          rxpkStruct.setTmms(564654);
           rxpkStruct.setTmst(3512348611);
           rxpkStruct.setChan(2);
           rxpkStruct.setRfch(0);
@@ -355,7 +355,7 @@ unittest
           data.setData("-DS4CGaDCdG+48eJNM3Vai-zDpsR71Pn9CPA9uCON84");
           
           rxpkStruct.setTime(sysTime);
-          rxpkStruct.setTmms(6164);
+          rxpkStruct.setTmms(ulong.max);
           rxpkStruct.setTmst(3512348611);
           rxpkStruct.setChan(2);
           rxpkStruct.setRfch(0);
@@ -540,8 +540,7 @@ unittest
                     "from json object should have \"INTEGER\" type, but it have \"STRING\" type!");
                   
                   (Lora.parse(incorrectPushDataArrayWithJson8)).shouldThrowWithMessage("field \"stat\" of rxpk structure " ~
-                    "from json object should have one of this values: \"0\" - NO_CRC, \"1\" - OK, \"-1\" - FAIL, but it " ~
-                    "has the value \"2\"");
+                    "from json object should have one of this values: \"1\", \"-1\" or \"0\", but it has the value \"2\"");
                   
                   (Lora.parse(incorrectPushDataArrayWithJson9)).shouldThrowWithMessage("rxpk structure from json object " ~
                     "should have field \"stat\"!");
@@ -559,8 +558,10 @@ unittest
                     "from json object in \"LORA\" mode should have \"STRING\" type, but it have \"INTEGER\" type!");
                   
                   (Lora.parse(incorrectPushDataArrayWithJson14)).shouldThrowWithMessage("field \"datr\" of rxpk structure " ~
-                    "from json object in \"LORA\" mode should have \"SF\" value from 6 to 12 and one of this \"BW\" value: " ~
-                    "\"125\", \"250\" or \"500\" (for example: \"SF11BW250\"), but it has the value \"hello\"");
+                    "from json object should have one of this values: \"SF6BW125\", \"SF6BW250\", \"SF6BW500\", \"SF7BW125\"," ~
+                    " \"SF7BW250\", \"SF7BW500\", \"SF8BW125\", \"SF8BW250\", \"SF8BW500\", \"SF9BW125\", \"SF9BW250\", " ~
+                    "\"SF9BW500\", \"SF10BW125\", \"SF10BW250\", \"SF10BW500\", \"SF11BW125\", \"SF11BW250\", \"SF11BW500\"," ~
+                    " \"SF12BW125\", \"SF12BW250\" or \"SF12BW500\", but it has the value \"hello\"");
                   
                   (Lora.parse(incorrectPushDataArrayWithJson15)).shouldThrowWithMessage("rxpk structure from json object in " ~
                     "\"LORA\" mode should have field \"datr\"!");
@@ -572,7 +573,7 @@ unittest
                     "from json object should have one of this values: \"4/5\", \"4/6\", \"4/7\" or \"4/8\", but it has the " ~
                     "value \"hello\"");
                   
-                  (Lora.parse(incorrectPushDataArrayWithJson18)).shouldThrowWithMessage("stat structure from json object " ~
+                  (Lora.parse(incorrectPushDataArrayWithJson18)).shouldThrowWithMessage("rxpk structure from json object " ~
                     "should have field \"codr\"!");
                   
                   (Lora.parse(incorrectPushDataArrayWithJson19)).shouldThrowWithMessage("field \"datr\" of rxpk structure " ~
