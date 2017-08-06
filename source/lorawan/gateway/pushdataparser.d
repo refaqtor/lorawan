@@ -15,6 +15,7 @@ import lorawan.gateway.pushdatapacket;
 import std.conv;
 import std.datetime;
 import std.json;
+import std.traits;
 import std.typecons;
 
 /// Parser for PUSH_DATA packets
@@ -74,7 +75,7 @@ class PushDataParser : ParserInterface
         // parsing of the stat structure...
         JSONValue jsonStatStructure = jsonValue["stat"];
         
-        Nullable!SysTime time = getStatTimeFromJson(jsonStatStructure);
+        Nullable!SysTime time = getTimeFromJson(jsonStatStructure, Structures.STAT);
         Nullable!double latn = getValueFromJsonByKey!double("latn", jsonStatStructure, Structures.STAT);
         Nullable!double late = getValueFromJsonByKey!double("late", jsonStatStructure, Structures.STAT);
         Nullable!int alti = getValueFromJsonByKey!int("alti", jsonStatStructure, Structures.STAT);
@@ -122,47 +123,28 @@ class PushDataParser : ParserInterface
           Nullable!LoraDatarate loraDatarate;
           Nullable!CyclicCodingRate cyclicCodingRate;
           
+          // Get the required fields rxpk structure
           crcStatus = getEnumValueFromJsonByKey!(byte, CrcStatus)("stat", jsonRxpkArrayElement, Structures.RXPK);
-          modulationIdentifier = getEnumValueFromJsonByKey!(string, ModulationIdentifier)("modu", jsonRxpkArrayElement, Structures.RXPK);
-          loraDatarate = getLoraDatarate(modulationIdentifier, jsonRxpkArrayElement); 
-          cyclicCodingRate = getEnumValueFromJsonByKey!(string, CyclicCodingRate)("codr", jsonRxpkArrayElement, Structures.RXPK);
           
-          // Get the optional fields of the rxpk structure
+          modulationIdentifier = getEnumValueFromJsonByKey!(string, ModulationIdentifier)
+          ("modu", jsonRxpkArrayElement, Structures.RXPK);
+          
+          loraDatarate = getLoraDatarate(modulationIdentifier, jsonRxpkArrayElement); 
+          
+          cyclicCodingRate = getEnumValueFromJsonByKey!(string, CyclicCodingRate)
+          ("codr", jsonRxpkArrayElement, Structures.RXPK);
+          
+          // Initialize the required fields rxpk structure
           Rxpk newRxpk;
           
-          if(("time" in jsonRxpkArrayElement) !is null)
-          {
-            if(jsonRxpkArrayElement["time"].type != JSON_TYPE.STRING)
-            {
-              throw new LorawanException("field \"time\" of rxpk structure from json object should have \"STRING\" " ~
-              "type, but it have \"" ~ to!string(jsonRxpkArrayElement["time"].type) ~"\" type!");
-            }
-            SysTime time = SysTime.fromISOString(jsonRxpkArrayElement["time"].str);
-            newRxpk.setTime(time);
-          }
-
-          if(modulationIdentifier == ModulationIdentifier.FSK)
-          {
-            try
-            {
-              Nullable!uint datr = getValueFromJsonByKey!uint("datr", jsonRxpkArrayElement, Structures.RXPK);
-              if(!datr.isNull){ newRxpk.setDatr(datr); }
-            }
-            catch(LorawanException lorawanException)
-            {
-              if(lorawanException.msg == "field \"datr\" of rxpk structure from json object should have " ~
-                "\"UINTEGER\" type, but it have \"STRING\" type!")
-              {
-                throw new LorawanException("field \"datr\" of rxpk structure from json object in \"FSK\" mode should " ~
-                 "have \"UINTEGER\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["datr"].type) ~ "\" type!");
-              }
-            }
-            catch(Exception exception)
-            {
-              throw new Exception(exception.msg);
-            }
-          }
+          newRxpk.setStat(crcStatus);
+          newRxpk.setModu(modulationIdentifier);
+          newRxpk.setCodr(cyclicCodingRate);
+          if(!loraDatarate.isNull){ newRxpk.setDatr(loraDatarate); }
           
+          // Get the optional fields of the rxpk structure
+          Nullable!SysTime time = getTimeFromJson(jsonRxpkArrayElement, Structures.RXPK);
+          Nullable!uint fskDatarate = getFskDatarate(modulationIdentifier, jsonRxpkArrayElement);
           Nullable!ulong tmms = getValueFromJsonByKey!ulong("tmms", jsonRxpkArrayElement, Structures.RXPK);
           Nullable!uint tmst = getValueFromJsonByKey!uint("tmst", jsonRxpkArrayElement, Structures.RXPK);
           Nullable!double freq = getValueFromJsonByKey!double("freq", jsonRxpkArrayElement, Structures.RXPK);
@@ -171,11 +153,11 @@ class PushDataParser : ParserInterface
           Nullable!short rssi = getValueFromJsonByKey!short("rssi", jsonRxpkArrayElement, Structures.RXPK);
           Nullable!float lsnr = getValueFromJsonByKey!float("lsnr", jsonRxpkArrayElement, Structures.RXPK);
           Nullable!uint size = getValueFromJsonByKey!uint("size", jsonRxpkArrayElement, Structures.RXPK);
+          Nullable!MacPacket rxpkData = getData(jsonRxpkArrayElement);
           
-          if(!crcStatus.isNull){ newRxpk.setStat(crcStatus); }
-          if(!modulationIdentifier.isNull){ newRxpk.setModu(modulationIdentifier); }
-          if(!loraDatarate.isNull){ newRxpk.setDatr(loraDatarate); }
-          if(!cyclicCodingRate.isNull){ newRxpk.setCodr(cyclicCodingRate); }
+          // Set the optional fields of the rxpk structure
+          if(!time.isNull){ newRxpk.setTime(time); }
+          if(!fskDatarate.isNull){ newRxpk.setDatr(fskDatarate); }
           if(!tmms.isNull){ newRxpk.setTmms(tmms); }
           if(!tmst.isNull){ newRxpk.setTmst(tmst); }
           if(!freq.isNull){ newRxpk.setFreq(freq); }
@@ -184,18 +166,7 @@ class PushDataParser : ParserInterface
           if(!rssi.isNull){ newRxpk.setRfch(rfch); }
           if(!lsnr.isNull){ newRxpk.setLsnr(lsnr); }
           if(!size.isNull){ newRxpk.setSize(size); }
-          
-          if(("data" in jsonRxpkArrayElement) !is null)
-          {
-            if(jsonRxpkArrayElement["data"].type != JSON_TYPE.STRING)
-            {
-              throw new LorawanException("field \"data\" of rxpk structure from json object should have " ~
-                "\"STRING\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["data"].type) ~"\" type!");
-            }
-            MacPacket macPacket = new MacPacket;
-            macPacket.setData(jsonRxpkArrayElement["data"].str);
-            newRxpk.setData(macPacket);
-          }
+          if(!rxpkData.isNull){ newRxpk.setData(rxpkData); }
           
           rxpkArray ~= newRxpk;
         }        
@@ -267,8 +238,9 @@ class PushDataParser : ParserInterface
         {
           if(!(realJsonType == JSON_TYPE.INTEGER && expectedJsonType == JSON_TYPE.UINTEGER))
           {
-            throw new LorawanException("field \"" ~ key ~ "\" of " ~ structureName ~ " structure from json object should have \"" ~
-              to!string(expectedJsonType) ~ "\" type, but it have \"" ~ to!string(realJsonType) ~ "\" type!");
+            throw new LorawanException("field \"" ~ key ~ "\" of " ~ structureName ~
+              " structure from json object should have \"" ~ to!string(expectedJsonType) ~
+              "\" type, but it have \"" ~ to!string(realJsonType) ~ "\" type!");
           }
         }
         
@@ -282,7 +254,6 @@ class PushDataParser : ParserInterface
           default : break;
         }
         
-        import std.traits;
         string[] enumStringArray = [];
         foreach (immutable enumValue; [EnumMembers!E])
         {
@@ -290,11 +261,22 @@ class PushDataParser : ParserInterface
         }
         
         string enumString = "";
-        for(int i = 0; i < enumStringArray.length - 2; i++)
-        {
-          enumString ~= enumStringArray[i] ~ ", ";
+        ulong length = enumStringArray.length;
+        if(length >= 2) {  
+          for(int i = 0; i < length - 2; i++)
+          {
+            enumString ~= enumStringArray[i] ~ ", ";
+          }
+          enumString ~= enumStringArray[length - 2] ~ " or "
+          ~ enumStringArray[length - 1];
         }
-        enumString ~= enumStringArray[enumStringArray.length - 2] ~ " or " ~ enumStringArray[enumStringArray.length - 1];
+        else
+        {
+          if(length == 1)
+          {
+            enumString ~= enumStringArray[0];
+          }
+        }
         
         E enumValue = cast(E)(valueFromJson);
         if(to!string(enumValue) != "cast(" ~ E.stringof ~ ")" ~ to!string(valueFromJson))
@@ -303,8 +285,9 @@ class PushDataParser : ParserInterface
         }
         else
         {
-          throw new LorawanException("field \"" ~ key ~ "\" of " ~ structureName ~ " structure from json object should have " ~
-            "one of this values: " ~ enumString ~ ", but it has the value \"" ~ to!string(valueFromJson) ~ "\"");
+          throw new LorawanException("field \"" ~ key ~ "\" of " ~ structureName ~
+            " structure from json object should have one of this values: " ~ enumString ~
+            ", but it has the value \"" ~ to!string(valueFromJson) ~ "\"");
         }
       }
       else
@@ -315,18 +298,26 @@ class PushDataParser : ParserInterface
       return result;
     }
     
-    Nullable!SysTime getStatTimeFromJson(JSONValue jsonStatStructure)
+    Nullable!SysTime getTimeFromJson(JSONValue jsonValue, Structures structureName)
     {
       Nullable!SysTime result;
       
-      if(("time" in jsonStatStructure) !is null)
+      if(("time" in jsonValue) !is null)
       {
-        if(jsonStatStructure["time"].type != JSON_TYPE.STRING)
+        if(jsonValue["time"].type != JSON_TYPE.STRING)
         {
-          throw new LorawanException("field \"time\" of stat structure from json object " ~
-            "should have \"STRING\" type, but it have \"" ~ to!string(jsonStatStructure["time"].type) ~ "\" type!");
+          throw new LorawanException("field \"time\" of " ~ structureName ~ " structure from json object " ~
+            "should have \"STRING\" type, but it have \"" ~ to!string(jsonValue["time"].type) ~ "\" type!");
         }
-        result = SysTime.fromISOExtString(jsonStatStructure["time"].str);
+        if(structureName == "stat")
+        {
+          result = SysTime.fromISOExtString(jsonValue["time"].str);
+        }
+        else
+        {
+          // structureName == "rxpk"
+          result = SysTime.fromISOString(jsonValue["time"].str);
+        }
       }
       
       return result;
@@ -354,7 +345,8 @@ class PushDataParser : ParserInterface
           {
             if(lorawanException.msg == "rxpk structure from json object should have field \"datr\"!")
             {
-              throw new LorawanException("rxpk structure from json object in \"LORA\" mode should have field \"datr\"!");
+              throw new LorawanException("rxpk structure from json object in \"LORA\" mode " ~
+                "should have field \"datr\"!");
             }
             else
             {
@@ -366,8 +358,54 @@ class PushDataParser : ParserInterface
         {
           throw new Exception(exception.msg);
         }
-      }  
-           
+      }
+            
       return result; 
     }
+    
+    Nullable!uint getFskDatarate(ModulationIdentifier modulationIdentifier, JSONValue jsonRxpkArrayElement)
+    {
+      Nullable!uint result;
+      
+      if(modulationIdentifier == ModulationIdentifier.FSK)
+      {
+        try
+        {
+          result = getValueFromJsonByKey!uint("datr", jsonRxpkArrayElement, Structures.RXPK);
+        }
+        catch(LorawanException lorawanException)
+        {
+          if(lorawanException.msg == "field \"datr\" of rxpk structure from json object should have " ~
+            "\"UINTEGER\" type, but it have \"STRING\" type!")
+          {
+            throw new LorawanException("field \"datr\" of rxpk structure from json object in \"FSK\" mode should " ~
+             "have \"UINTEGER\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["datr"].type) ~ "\" type!");
+          }
+        }
+        catch(Exception exception)
+        {
+          throw new Exception(exception.msg);
+        }
+      }  
+
+      return result; 
+    }
+    
+    Nullable!MacPacket getData(JSONValue jsonRxpkArrayElement)
+    {
+      Nullable!MacPacket result;
+      
+      if(("data" in jsonRxpkArrayElement) !is null)
+      {
+        if(jsonRxpkArrayElement["data"].type != JSON_TYPE.STRING)
+        {
+          throw new LorawanException("field \"data\" of rxpk structure from json object should have " ~
+            "\"STRING\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["data"].type) ~"\" type!");
+        }
+        result = new MacPacket;
+        result.setData(jsonRxpkArrayElement["data"].str);
+      }
+      
+      return result;
+    }          
 }

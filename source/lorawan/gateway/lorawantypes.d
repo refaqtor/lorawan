@@ -10,7 +10,7 @@ import std.json;
 
 alias GatewayID = ubyte[8];
 
-//TODO:add docs
+///Initializes an associative array that connects the types of 'd' language and types of json format
 static this()
 {
   dlangToJsonTypes =
