@@ -215,7 +215,6 @@ class PushDataParser : ParserInterface
                 
         switch(realJsonType)
         {
-          case JSON_TYPE.STRING : result = to!T(jsonValue[key].str); break;
           case JSON_TYPE.INTEGER : result = to!T(jsonValue[key].integer); break;
           case JSON_TYPE.UINTEGER : result = to!T(jsonValue[key].uinteger); break;
           case JSON_TYPE.FLOAT : result = to!T(jsonValue[key].floating); break;
@@ -249,8 +248,6 @@ class PushDataParser : ParserInterface
         {
           case JSON_TYPE.STRING : valueFromJson = to!T(jsonValue[key].str); break;
           case JSON_TYPE.INTEGER : valueFromJson = to!T(jsonValue[key].integer); break;
-          case JSON_TYPE.UINTEGER : valueFromJson = to!T(jsonValue[key].uinteger); break;
-          case JSON_TYPE.FLOAT : valueFromJson = to!T(jsonValue[key].floating); break;
           default : break;
         }
         
@@ -272,10 +269,7 @@ class PushDataParser : ParserInterface
         }
         else
         {
-          if(length == 1)
-          {
-            enumString ~= enumStringArray[0];
-          }
+          if(length == 1){ enumString ~= enumStringArray[0]; }
         }
         
         E enumValue = cast(E)(valueFromJson);
