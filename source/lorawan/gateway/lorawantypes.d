@@ -43,7 +43,9 @@ enum PacketType: ubyte
   /// PUSH_DATA packet type
   PUSH_DATA = 0x00,
   /// PUSH_ACK packet type
-  PUSH_ACK = 0x01
+  PUSH_ACK = 0x01,
+  /// PULL_DATA packet type
+  PULL_DATA = 0x02  
 }
 
 /// Enumeration of CRC statuses
