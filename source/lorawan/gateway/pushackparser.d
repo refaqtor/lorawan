@@ -24,9 +24,17 @@ class PushAckParser : ParserInterface
   */
   AbstractPacket parse(in ubyte[] data)
   {
-    if(data.length != 4){ return null; }
-    else if(data[0] != ProtocolVersion.VERSION_2){ return null; }
-    else if(data[3] != PacketType.PUSH_ACK){ return null; }
+    if(data.length != 4)
+    { 
+      return null;
+    }
+    if(data[0] != ProtocolVersion.VERSION_2){
+      return null;
+    }
+    if(data[3] != PacketType.PUSH_ACK)
+    {
+      return null;
+    }
     else
     {
       PushAckPacket result = new PushAckPacket;

@@ -7,6 +7,7 @@
 module lorawan.gateway.pushdatapacket;
 
 import lorawan.gateway.abstractpacket;
+import lorawan.gateway.lorawanexception;
 import lorawan.gateway.lorawantypes;
 import lorawan.gateway.macpacket;
 import std.conv;
@@ -29,15 +30,15 @@ struct Rxpk
     
       Params:
         time = value used to initialize UTC time of pkt RX, us precision, ISO 8601 'compact' format
-        
-      Returns:
-        $(D bool)
+
     */
-    bool setTime(SysTime time)
+    void setTime(SysTime time)
     {
-      if(time.timezone().name != "UTC"){ return false; }
+      if(time.timezone().name != "UTC")
+      { 
+        throw new LorawanException("'time' should be in UTC format, not in '" ~ time.timezone().name ~ "'");
+      }
       _time = time;
-      return true;
     }
 
     
@@ -159,7 +160,6 @@ struct Rxpk
         datrs = value used to initialize LoRa datarate identifier
     */
     void setDatr(LoraDatarate datrs){ _datrs = datrs; }
-
     
     /**Get FSK datarate (unsigned integer, in bits per second)
       
@@ -174,7 +174,6 @@ struct Rxpk
         datrn = value used to initialize FSK datarate
     */
     void setDatr(uint datrn){ _datrn = datrn; }
-
    
     /**Get LoRa ECC coding rate identifier
       
@@ -284,11 +283,13 @@ struct Stat
       Params:
         time = value used to initialize UTC 'system' time of the gateway, ISO 8601 'expanded' format
     */
-    bool setTime(SysTime time)
-    { 
-      if(time.timezone().name != "UTC"){ return false; }
+    void setTime(SysTime time)
+    {
+      if(time.timezone().name != "UTC")
+      { 
+        throw new LorawanException("'time' should be in UTC format, not in '" ~ time.timezone().name ~ "'");
+      }
       _time = time;
-      return true;
     }
     
     /**Get GPS latitude of the gateway in degree (float, N is +)
@@ -433,9 +434,9 @@ struct Stat
     Nullable!double _latn; //GPS latitude of the gateway in degree (float, N is +)
     Nullable!double _late; //GPS latitude of the gateway in degree (float, E is +)
     Nullable!int _alti; //GPS altitude of the gateway in meter RX (integer)
-    Nullable!ulong _rxnb; //Number of radio packets received (unsigned integer)
+    Nullable!ulong _rxnb; //Number of radio packets received (unsigned long)
     Nullable!ulong _rxok; //Number of radio packets received with a valid PHY CRC
-    Nullable!ulong _rxfw; //Number of radio packets forwarded (unsigned integer)
+    Nullable!ulong _rxfw; //Number of radio packets forwarded (unsigned long)
     Nullable!double _ackr; //Percentage of upstream datagrams that were acknowledged
     Nullable!uint _dwnb; //Number of downlink datagrams received (unsigned integer)
     Nullable!uint _txnb; //Number of packets emitted (unsigned integer)
@@ -576,11 +577,11 @@ class PushDataPacket : AbstractPacket
         MacPacket data = rxpkStruct.getData();
        
         if(!time.isNull){ rxpkValue["time"] = time.toISOString();}
-        if(!tmms.isNull){ rxpkValue["tmms"] = tmms;}
-        if(!tmst.isNull){ rxpkValue["tmst"] = tmst;}
-        if(!freq.isNull){ rxpkValue["freq"] = cast(double)freq;}
-        if(!chan.isNull){ rxpkValue["chan"] = chan;}
-        if(!rfch.isNull){ rxpkValue["rfch"] = rfch;}
+        if(!tmms.isNull){ rxpkValue["tmms"] = cast(ulong) tmms;}
+        if(!tmst.isNull){ rxpkValue["tmst"] = cast(uint) tmst;}
+        if(!freq.isNull){ rxpkValue["freq"] = cast(double) freq;}
+        if(!chan.isNull){ rxpkValue["chan"] = cast(ubyte) chan;}
+        if(!rfch.isNull){ rxpkValue["rfch"] = cast(uint) rfch;}
         rxpkValue["stat"] = cast(byte)stat;
         rxpkValue["modu"] = modu;
         
@@ -594,14 +595,14 @@ class PushDataPacket : AbstractPacket
           {
             if(!datrn.isNull)
             { 
-              rxpkValue["datr"] = datrn;
+              rxpkValue["datr"] = cast(uint)datrn;
             }
           }
         }
         rxpkValue["codr"] = codr;
-        if(!rssi.isNull){ rxpkValue["rssi"] = rssi;}
+        if(!rssi.isNull){ rxpkValue["rssi"] = cast(short) rssi;}
         if(!lsnr.isNull){ rxpkValue["lsnr"] = cast(float) lsnr;}
-        if(!size.isNull){ rxpkValue["size"] = size;}
+        if(!size.isNull){ rxpkValue["size"] = cast(uint) size;}
         if(data !is null){ rxpkValue["data"] = data.getData();}
         if(!rxpkValue.isNull())
         {
@@ -632,13 +633,13 @@ class PushDataPacket : AbstractPacket
         if(!time.isNull){ statVal["time"] = time.toISOExtString();}
         if(!latn.isNull){ statVal["latn"] = cast(double) latn;}
         if(!late.isNull){ statVal["late"] = cast(double) late;}
-        if(!alti.isNull){ statVal["alti"] = alti;}
-        if(!rxnb.isNull){ statVal["rxnb"] = rxnb;}
-        if(!rxok.isNull){ statVal["rxok"] = rxok;}
-        if(!rxfw.isNull){ statVal["rxfw"] = rxfw;}
-        if(!ackr.isNull){ statVal["ackr"] = cast(float) ackr;}
-        if(!dwnb.isNull){ statVal["dwnb"] = dwnb;}
-        if(!txnb.isNull){ statVal["txnb"] = txnb;}
+        if(!alti.isNull){ statVal["alti"] = cast(int) alti;}
+        if(!rxnb.isNull){ statVal["rxnb"] = cast(ulong) rxnb;}
+        if(!rxok.isNull){ statVal["rxok"] = cast(ulong) rxok;}
+        if(!rxfw.isNull){ statVal["rxfw"] = cast(ulong) rxfw;}
+        if(!ackr.isNull){ statVal["ackr"] = cast(double) ackr;}
+        if(!dwnb.isNull){ statVal["dwnb"] = cast(uint) dwnb;}
+        if(!txnb.isNull){ statVal["txnb"] = cast(uint) txnb;}
       }
       
       return statVal;

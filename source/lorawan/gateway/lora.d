@@ -9,6 +9,7 @@ module lorawan.gateway.lora;
 import lorawan.gateway.abstractpacket;
 import lorawan.gateway.parserinterface;
 import lorawan.gateway.pushackparser;
+import lorawan.gateway.pushdataparser;
 
 /// A static class that is used to parse byte arrays into the required packets
 final static class Lora
@@ -18,6 +19,7 @@ final static class Lora
     static this()
     {
       addParser!PushAckParser;
+      addParser!PushDataParser;
     }
     
     /** Used to parse byte array into the required packet
