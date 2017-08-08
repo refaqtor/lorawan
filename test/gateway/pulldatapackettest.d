@@ -77,6 +77,10 @@ unittest
               ({
                   pullDataPacket.shouldNotBeNull();
                   pullDataPacket.shouldBeInstanceOf!PullDataPacket();
+                  
+                  // For coverage
+                  (cast(PullDataPacket) pullDataPacket).getGatewayID.shouldEqual(gatewayID);
+                  
                   (cast(PullDataPacket) pullDataPacket).shouldEqual(expected);
               });
           });
