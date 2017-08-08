@@ -8,6 +8,7 @@ module lorawan.gateway.lora;
 
 import lorawan.gateway.abstractpacket;
 import lorawan.gateway.parserinterface;
+import lorawan.gateway.pullackparser;
 import lorawan.gateway.pushackparser;
 import lorawan.gateway.pushdataparser;
 
@@ -20,6 +21,7 @@ final static class Lora
     {
       addParser!PushAckParser;
       addParser!PushDataParser;
+      addParser!PullAckParser;
     }
     
     /** Used to parse byte array into the required packet
