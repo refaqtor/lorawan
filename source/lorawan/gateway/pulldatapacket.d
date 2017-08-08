@@ -13,7 +13,7 @@ import lorawan.gateway.lorawantypes;
 class PullDataPacket : AbstractPacket
 {
   public:
-    /// Used to initialize protocol version, packet type and token.  
+    /// Used to initialize protocol version, packet type, token and gateway id.  
     this()
     {
       super(ProtocolVersion.VERSION_2, PacketType.PULL_DATA, [0, 0]);
