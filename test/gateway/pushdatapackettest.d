@@ -361,8 +361,7 @@ unittest
           rxpkStruct.setRfch(0);
           rxpkStruct.setFreq(866.349812);
           rxpkStruct.setStat(CrcStatus.OK);
-          rxpkStruct.setModu(ModulationIdentifier.LORA);
-          rxpkStruct.setDatr(LoraDatarate.SF_7_BW_125);
+          rxpkStruct.setModu(ModulationIdentifier.FSK);
           rxpkStruct.setCodr(CyclicCodingRate.CR_4_6);
           rxpkStruct.setRssi(-35);
           rxpkStruct.setLsnr(5.1);

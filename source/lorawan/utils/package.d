@@ -4,7 +4,6 @@
   Authors: LLC CERERIS
 */
 
-module lorawan;
+module lorawan.utils;
 
-public import lorawan.gateway;
-public import lorawan.utils;
+public import lorawan.utils.parserhelper;

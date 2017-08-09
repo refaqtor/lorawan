@@ -12,10 +12,10 @@ import lorawan.gateway.lorawantypes;
 import lorawan.gateway.macpacket;
 import lorawan.gateway.parserinterface;
 import lorawan.gateway.pushdatapacket;
+import lorawan.utils.parserhelper;
 import std.conv;
 import std.datetime;
 import std.json;
-import std.traits;
 import std.typecons;
 
 /// Parser for PUSH_DATA packets
@@ -75,16 +75,16 @@ class PushDataParser : ParserInterface
         // parsing of the stat structure...
         JSONValue jsonStatStructure = jsonValue["stat"];
         
-        Nullable!SysTime time = getTimeFromJson(jsonStatStructure, Structures.STAT);
-        Nullable!double latn = getValueFromJsonByKey!double("latn", jsonStatStructure, Structures.STAT);
-        Nullable!double late = getValueFromJsonByKey!double("late", jsonStatStructure, Structures.STAT);
-        Nullable!int alti = getValueFromJsonByKey!int("alti", jsonStatStructure, Structures.STAT);
-        Nullable!ulong rxnb = getValueFromJsonByKey!ulong("rxnb", jsonStatStructure, Structures.STAT);
-        Nullable!ulong rxok = getValueFromJsonByKey!ulong("rxok", jsonStatStructure, Structures.STAT);
-        Nullable!ulong rxfw = getValueFromJsonByKey!ulong("rxfw", jsonStatStructure, Structures.STAT);
-        Nullable!int ackr = getValueFromJsonByKey!int("ackr", jsonStatStructure, Structures.STAT);
-        Nullable!uint dwnb = getValueFromJsonByKey!uint("dwnb", jsonStatStructure, Structures.STAT);
-        Nullable!uint txnb = getValueFromJsonByKey!uint("txnb", jsonStatStructure, Structures.STAT);
+        Nullable!SysTime time = getTimeFromJson(jsonStatStructure, NamesOfStructures.STAT);
+        Nullable!double latn = getValueFromJsonByKey!double("latn", jsonStatStructure, NamesOfStructures.STAT);
+        Nullable!double late = getValueFromJsonByKey!double("late", jsonStatStructure, NamesOfStructures.STAT);
+        Nullable!int alti = getValueFromJsonByKey!int("alti", jsonStatStructure, NamesOfStructures.STAT);
+        Nullable!ulong rxnb = getValueFromJsonByKey!ulong("rxnb", jsonStatStructure, NamesOfStructures.STAT);
+        Nullable!ulong rxok = getValueFromJsonByKey!ulong("rxok", jsonStatStructure, NamesOfStructures.STAT);
+        Nullable!ulong rxfw = getValueFromJsonByKey!ulong("rxfw", jsonStatStructure, NamesOfStructures.STAT);
+        Nullable!int ackr = getValueFromJsonByKey!int("ackr", jsonStatStructure, NamesOfStructures.STAT);
+        Nullable!uint dwnb = getValueFromJsonByKey!uint("dwnb", jsonStatStructure, NamesOfStructures.STAT);
+        Nullable!uint txnb = getValueFromJsonByKey!uint("txnb", jsonStatStructure, NamesOfStructures.STAT);
         
         if(!time.isNull){ statStructure.setTime(time); }
         if(!latn.isNull){ statStructure.setLatn(latn); }
@@ -124,15 +124,15 @@ class PushDataParser : ParserInterface
           Nullable!CyclicCodingRate cyclicCodingRate;
           
           // Get the required fields rxpk structure
-          crcStatus = getEnumValueFromJsonByKey!(byte, CrcStatus)("stat", jsonRxpkArrayElement, Structures.RXPK);
+          crcStatus = getEnumValueFromJsonByKey!(byte, CrcStatus)("stat", jsonRxpkArrayElement, NamesOfStructures.RXPK);
           
           modulationIdentifier = getEnumValueFromJsonByKey!(string, ModulationIdentifier)
-          ("modu", jsonRxpkArrayElement, Structures.RXPK);
+          ("modu", jsonRxpkArrayElement, NamesOfStructures.RXPK);
           
-          loraDatarate = getLoraDatarate(modulationIdentifier, jsonRxpkArrayElement); 
+          loraDatarate = getLoraDatarate(modulationIdentifier, jsonRxpkArrayElement, NamesOfStructures.RXPK	); 
           
           cyclicCodingRate = getEnumValueFromJsonByKey!(string, CyclicCodingRate)
-          ("codr", jsonRxpkArrayElement, Structures.RXPK);
+          ("codr", jsonRxpkArrayElement, NamesOfStructures.RXPK);
           
           // Initialize the required fields rxpk structure
           Rxpk newRxpk;
@@ -143,17 +143,17 @@ class PushDataParser : ParserInterface
           if(!loraDatarate.isNull){ newRxpk.setDatr(loraDatarate); }
           
           // Get the optional fields of the rxpk structure
-          Nullable!SysTime time = getTimeFromJson(jsonRxpkArrayElement, Structures.RXPK);
-          Nullable!uint fskDatarate = getFskDatarate(modulationIdentifier, jsonRxpkArrayElement);
-          Nullable!ulong tmms = getValueFromJsonByKey!ulong("tmms", jsonRxpkArrayElement, Structures.RXPK);
-          Nullable!uint tmst = getValueFromJsonByKey!uint("tmst", jsonRxpkArrayElement, Structures.RXPK);
-          Nullable!double freq = getValueFromJsonByKey!double("freq", jsonRxpkArrayElement, Structures.RXPK);
-          Nullable!ubyte chan = getValueFromJsonByKey!ubyte("chan", jsonRxpkArrayElement, Structures.RXPK);
-          Nullable!uint rfch = getValueFromJsonByKey!uint("rfch", jsonRxpkArrayElement, Structures.RXPK);
-          Nullable!short rssi = getValueFromJsonByKey!short("rssi", jsonRxpkArrayElement, Structures.RXPK);
-          Nullable!float lsnr = getValueFromJsonByKey!float("lsnr", jsonRxpkArrayElement, Structures.RXPK);
-          Nullable!uint size = getValueFromJsonByKey!uint("size", jsonRxpkArrayElement, Structures.RXPK);
-          Nullable!MacPacket rxpkData = getData(jsonRxpkArrayElement);
+          Nullable!SysTime time = getTimeFromJson(jsonRxpkArrayElement, NamesOfStructures.RXPK);
+          Nullable!uint fskDatarate = getFskDatarate(modulationIdentifier, jsonRxpkArrayElement, NamesOfStructures.RXPK);
+          Nullable!ulong tmms = getValueFromJsonByKey!ulong("tmms", jsonRxpkArrayElement, NamesOfStructures.RXPK);
+          Nullable!uint tmst = getValueFromJsonByKey!uint("tmst", jsonRxpkArrayElement, NamesOfStructures.RXPK);
+          Nullable!double freq = getValueFromJsonByKey!double("freq", jsonRxpkArrayElement, NamesOfStructures.RXPK);
+          Nullable!ubyte chan = getValueFromJsonByKey!ubyte("chan", jsonRxpkArrayElement, NamesOfStructures.RXPK);
+          Nullable!uint rfch = getValueFromJsonByKey!uint("rfch", jsonRxpkArrayElement, NamesOfStructures.RXPK);
+          Nullable!short rssi = getValueFromJsonByKey!short("rssi", jsonRxpkArrayElement, NamesOfStructures.RXPK);
+          Nullable!float lsnr = getValueFromJsonByKey!float("lsnr", jsonRxpkArrayElement, NamesOfStructures.RXPK);
+          Nullable!uint size = getValueFromJsonByKey!uint("size", jsonRxpkArrayElement, NamesOfStructures.RXPK);
+          Nullable!MacPacket rxpkData = getData(jsonRxpkArrayElement, NamesOfStructures.RXPK);
           
           // Set the optional fields of the rxpk structure
           if(!time.isNull){ newRxpk.setTime(time); }
@@ -188,111 +188,8 @@ class PushDataParser : ParserInterface
     }
   }
   
-  private: 
-    enum Structures: string
-    {
-      RXPK = "rxpk",
-      STAT = "stat"
-    }
-  
-    Nullable!T getValueFromJsonByKey(T)(string key, JSONValue jsonValue, Structures structureName)
-    {
-      Nullable!T result;
-      
-      if((key in jsonValue) !is null)
-      {
-        JSON_TYPE expectedJsonType = dlangToJsonTypes[T.stringof];
-        JSON_TYPE realJsonType = jsonValue[key].type;
-        if(realJsonType != expectedJsonType)
-        {
-          if(!(realJsonType == JSON_TYPE.INTEGER && expectedJsonType == JSON_TYPE.UINTEGER))
-          {
-            throw new LorawanException("field \"" ~ key ~ "\" of " ~ structureName ~ 
-              " structure from json object should have \"" ~ to!string(expectedJsonType) ~ 
-              "\" type, but it have \"" ~ to!string(realJsonType) ~ "\" type!");
-          }
-        }
-                
-        switch(realJsonType)
-        {
-          case JSON_TYPE.INTEGER : result = to!T(jsonValue[key].integer); break;
-          case JSON_TYPE.UINTEGER : result = to!T(jsonValue[key].uinteger); break;
-          case JSON_TYPE.FLOAT : result = to!T(jsonValue[key].floating); break;
-          default : break;
-        }
-      }
-      
-      return result;
-    }
-    
-    Nullable!E getEnumValueFromJsonByKey(T, E)(string key, JSONValue jsonValue, Structures structureName)
-    {
-      Nullable!E result;
-      
-      if((key in jsonValue) !is null)
-      {
-        JSON_TYPE expectedJsonType = dlangToJsonTypes[T.stringof];
-        JSON_TYPE realJsonType = jsonValue[key].type;
-        if(realJsonType != expectedJsonType)
-        {
-          if(!(realJsonType == JSON_TYPE.INTEGER && expectedJsonType == JSON_TYPE.UINTEGER))
-          {
-            throw new LorawanException("field \"" ~ key ~ "\" of " ~ structureName ~
-              " structure from json object should have \"" ~ to!string(expectedJsonType) ~
-              "\" type, but it have \"" ~ to!string(realJsonType) ~ "\" type!");
-          }
-        }
-        
-        T valueFromJson;
-        switch(realJsonType)
-        {
-          case JSON_TYPE.STRING : valueFromJson = to!T(jsonValue[key].str); break;
-          case JSON_TYPE.INTEGER : valueFromJson = to!T(jsonValue[key].integer); break;
-          default : break;
-        }
-        
-        string[] enumStringArray = [];
-        foreach (immutable enumValue; [EnumMembers!E])
-        {
-          enumStringArray ~= "\"" ~ to!string(cast(T)(enumValue)) ~ "\"";
-        }
-        
-        string enumString = "";
-        ulong length = enumStringArray.length;
-        if(length >= 2) {  
-          for(int i = 0; i < length - 2; i++)
-          {
-            enumString ~= enumStringArray[i] ~ ", ";
-          }
-          enumString ~= enumStringArray[length - 2] ~ " or "
-          ~ enumStringArray[length - 1];
-        }
-        else
-        {
-          if(length == 1){ enumString ~= enumStringArray[0]; }
-        }
-        
-        E enumValue = cast(E)(valueFromJson);
-        if(to!string(enumValue) != "cast(" ~ E.stringof ~ ")" ~ to!string(valueFromJson))
-        {
-          result = enumValue;
-        }
-        else
-        {
-          throw new LorawanException("field \"" ~ key ~ "\" of " ~ structureName ~
-            " structure from json object should have one of this values: " ~ enumString ~
-            ", but it has the value \"" ~ to!string(valueFromJson) ~ "\"");
-        }
-      }
-      else
-      {
-        throw new LorawanException("rxpk structure from json object should have field \"" ~ key ~ "\"!");
-      }
-      
-      return result;
-    }
-    
-    Nullable!SysTime getTimeFromJson(JSONValue jsonValue, Structures structureName)
+  private:
+    Nullable!SysTime getTimeFromJson(JSONValue jsonValue, NamesOfStructures structureName)
     {
       Nullable!SysTime result;
       
@@ -316,90 +213,4 @@ class PushDataParser : ParserInterface
       
       return result;
     }
-    
-    Nullable!LoraDatarate getLoraDatarate(ModulationIdentifier modulationIdentifier, JSONValue jsonRxpkArrayElement)
-    {
-      Nullable!LoraDatarate result;
-      
-      if(modulationIdentifier == ModulationIdentifier.LORA)
-      {
-        try
-        {
-          result = getEnumValueFromJsonByKey!(string, LoraDatarate)("datr", jsonRxpkArrayElement, Structures.RXPK);
-        }
-        catch(LorawanException lorawanException)
-        {
-          if(lorawanException.msg == "field \"datr\" of rxpk structure from json object should have " ~
-            "\"STRING\" type, but it have \"INTEGER\" type!")
-          {
-            throw new LorawanException("field \"datr\" of rxpk structure from json object in \"LORA\" mode should " ~
-              "have \"STRING\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["datr"].type) ~ "\" type!");
-          }
-          else
-          {
-            if(lorawanException.msg == "rxpk structure from json object should have field \"datr\"!")
-            {
-              throw new LorawanException("rxpk structure from json object in \"LORA\" mode " ~
-                "should have field \"datr\"!");
-            }
-            else
-            {
-               throw new LorawanException(lorawanException.msg);
-            }  
-          }
-        }
-        catch(Exception exception)
-        {
-          throw new Exception(exception.msg);
-        }
-      }
-            
-      return result; 
-    }
-    
-    Nullable!uint getFskDatarate(ModulationIdentifier modulationIdentifier, JSONValue jsonRxpkArrayElement)
-    {
-      Nullable!uint result;
-      
-      if(modulationIdentifier == ModulationIdentifier.FSK)
-      {
-        try
-        {
-          result = getValueFromJsonByKey!uint("datr", jsonRxpkArrayElement, Structures.RXPK);
-        }
-        catch(LorawanException lorawanException)
-        {
-          if(lorawanException.msg == "field \"datr\" of rxpk structure from json object should have " ~
-            "\"UINTEGER\" type, but it have \"STRING\" type!")
-          {
-            throw new LorawanException("field \"datr\" of rxpk structure from json object in \"FSK\" mode should " ~
-             "have \"UINTEGER\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["datr"].type) ~ "\" type!");
-          }
-        }
-        catch(Exception exception)
-        {
-          throw new Exception(exception.msg);
-        }
-      }  
-
-      return result; 
-    }
-    
-    Nullable!MacPacket getData(JSONValue jsonRxpkArrayElement)
-    {
-      Nullable!MacPacket result;
-      
-      if(("data" in jsonRxpkArrayElement) !is null)
-      {
-        if(jsonRxpkArrayElement["data"].type != JSON_TYPE.STRING)
-        {
-          throw new LorawanException("field \"data\" of rxpk structure from json object should have " ~
-            "\"STRING\" type, but it have \"" ~ to!string(jsonRxpkArrayElement["data"].type) ~"\" type!");
-        }
-        result = new MacPacket;
-        result.setData(jsonRxpkArrayElement["data"].str);
-      }
-      
-      return result;
-    }          
 }
