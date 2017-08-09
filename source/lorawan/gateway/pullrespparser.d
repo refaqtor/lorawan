@@ -143,7 +143,8 @@ class PullRespParser : ParserInterface
         if(!canFind(expectedJsonTypeArr, realJsonType))
         {
           throw new LorawanException("field \"" ~ key ~ "\" of " ~ structureName ~ 
-            " structure from json object should have one of this types: \"TRUE\" or \"FALSE\", but it have \"" ~ to!string(realJsonType) ~ "\" type!");
+            " structure from json object should have one of this types: " ~
+            "\"TRUE\" or \"FALSE\", but it have \"" ~to!string(realJsonType) ~ "\" type!");
         }
                  
         switch(realJsonType)

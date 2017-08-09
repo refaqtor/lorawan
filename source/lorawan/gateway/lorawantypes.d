@@ -137,6 +137,7 @@ enum CyclicCodingRate : string
 ///Associative array that connects the types of 'd' language and types of json format
 immutable JSON_TYPE[string] dlangToJsonTypes;
 
+///The names of the structures that use packages 
 enum NamesOfStructures: string
 {
   RXPK = "rxpk",

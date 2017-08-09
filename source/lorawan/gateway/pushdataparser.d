@@ -144,7 +144,8 @@ class PushDataParser : ParserInterface
           
           // Get the optional fields of the rxpk structure
           Nullable!SysTime time = getTimeFromJson(jsonRxpkArrayElement, NamesOfStructures.RXPK);
-          Nullable!uint fskDatarate = getFskDatarate(modulationIdentifier, jsonRxpkArrayElement, NamesOfStructures.RXPK);
+          Nullable!uint fskDatarate = getFskDatarate(modulationIdentifier, jsonRxpkArrayElement,
+            NamesOfStructures.RXPK);
           Nullable!ulong tmms = getValueFromJsonByKey!ulong("tmms", jsonRxpkArrayElement, NamesOfStructures.RXPK);
           Nullable!uint tmst = getValueFromJsonByKey!uint("tmst", jsonRxpkArrayElement, NamesOfStructures.RXPK);
           Nullable!double freq = getValueFromJsonByKey!double("freq", jsonRxpkArrayElement, NamesOfStructures.RXPK);

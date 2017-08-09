@@ -25,8 +25,8 @@ static Nullable!T getValueFromJsonByKey(T)(string key, JSONValue jsonValue, Name
     if(realJsonType != expectedJsonType)
     {
       if(!((realJsonType == JSON_TYPE.INTEGER && expectedJsonType == JSON_TYPE.UINTEGER) ||
-      (realJsonType == JSON_TYPE.INTEGER || realJsonType == JSON_TYPE.UINTEGER) &&
-      expectedJsonType == JSON_TYPE.FLOAT))
+      ((realJsonType == JSON_TYPE.INTEGER || realJsonType == JSON_TYPE.UINTEGER) &&
+      expectedJsonType == JSON_TYPE.FLOAT)))
       {
         throw new LorawanException("field \"" ~ key ~ "\" of " ~ structureName ~ 
           " structure from json object should have \"" ~ to!string(expectedJsonType) ~ 
@@ -113,7 +113,8 @@ static Nullable!E getEnumValueFromJsonByKey(T, E)(string key, JSONValue jsonValu
   return result;
 }
 
-static Nullable!LoraDatarate getLoraDatarate(ModulationIdentifier modulationIdentifier, JSONValue jsonValue, NamesOfStructures structureName)
+static Nullable!LoraDatarate getLoraDatarate(ModulationIdentifier modulationIdentifier,
+  JSONValue jsonValue, NamesOfStructures structureName)
 {
   Nullable!LoraDatarate result;
    
@@ -128,8 +129,9 @@ static Nullable!LoraDatarate getLoraDatarate(ModulationIdentifier modulationIden
       if(lorawanException.msg == "field \"datr\" of " ~ structureName ~ " structure from json object should have " ~
         "\"STRING\" type, but it have \"INTEGER\" type!")
       {
-        throw new LorawanException("field \"datr\" of " ~ structureName ~ " structure from json object in \"LORA\" mode should " ~
-          "have \"STRING\" type, but it have \"" ~ to!string(jsonValue["datr"].type) ~ "\" type!");
+        throw new LorawanException("field \"datr\" of " ~ structureName ~ " structure from json object in " ~
+          "\"LORA\" mode should have \"STRING\" type, but it have \"" ~ to!string(jsonValue["datr"].type) ~
+          "\" type!");
       }
       else
       {
@@ -153,7 +155,8 @@ static Nullable!LoraDatarate getLoraDatarate(ModulationIdentifier modulationIden
   return result; 
 }
 
-static Nullable!uint getFskDatarate(ModulationIdentifier modulationIdentifier, JSONValue jsonValue, NamesOfStructures structureName)
+static Nullable!uint getFskDatarate(ModulationIdentifier modulationIdentifier,
+  JSONValue jsonValue, NamesOfStructures structureName)
 {
   Nullable!uint result;
   
@@ -168,8 +171,9 @@ static Nullable!uint getFskDatarate(ModulationIdentifier modulationIdentifier, J
       if(lorawanException.msg == "field \"datr\" of " ~ structureName ~ " structure from json object should have " ~
         "\"UINTEGER\" type, but it have \"STRING\" type!")
       {
-        throw new LorawanException("field \"datr\" of " ~ structureName ~ " structure from json object in \"FSK\" mode should " ~
-         "have \"UINTEGER\" type, but it have \"" ~ to!string(jsonValue["datr"].type) ~ "\" type!");
+        throw new LorawanException("field \"datr\" of " ~ structureName ~ " structure from json object in " ~
+          "\"FSK\" mode should have \"UINTEGER\" type, but it have \"" ~ to!string(jsonValue["datr"].type) ~
+          "\" type!");
       }
     }
     catch(Exception exception)
