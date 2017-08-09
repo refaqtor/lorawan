@@ -13,12 +13,7 @@ import lorawan.gateway.lorawantypes;
 class PushAckPacket : AbstractPacket
 {
   public:
-    /** Used to initialize protocol version, packet type and token.
-    
-      Params:
-        protocolVersion = protocol version between Lora gateway and server, default value is ProtocolVersion.VERSION_2.
-        token = random token, default falue is [0, 0].
-    */  
+    /// Used to initialize protocol version, packet type and token.
     this()
     {
       super(ProtocolVersion.VERSION_2, PacketType.PUSH_ACK, [0, 0]);
