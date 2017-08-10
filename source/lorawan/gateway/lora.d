@@ -10,6 +10,7 @@ import lorawan.gateway.abstractpacket;
 import lorawan.gateway.parserinterface;
 import lorawan.gateway.pullackparser;
 import lorawan.gateway.pulldataparser;
+import lorawan.gateway.pullrespparser;
 import lorawan.gateway.pushackparser;
 import lorawan.gateway.pushdataparser;
 
@@ -24,6 +25,7 @@ final static class Lora
       addParser!PushDataParser;
       addParser!PullAckParser;
       addParser!PullDataParser;
+      addParser!PullRespParser;
     }
     
     /** Used to parse byte array into the required packet

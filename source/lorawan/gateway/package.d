@@ -13,6 +13,7 @@ public import lorawan.gateway.macpacket;
 public import lorawan.gateway.parserinterface;
 public import lorawan.gateway.pulldatapacket;
 public import lorawan.gateway.pulldataparser;
+public import lorawan.gateway.pullresppacket;
 public import lorawan.gateway.pushackpacket;
 public import lorawan.gateway.pushackparser;
 public import lorawan.gateway.pushdatapacket;

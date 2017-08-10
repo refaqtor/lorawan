@@ -46,6 +46,8 @@ enum PacketType: ubyte
   PUSH_ACK = 0x01,
   /// PULL_DATA packet type
   PULL_DATA = 0x02,
+  /// PULL_RESP packet type
+  PULL_RESP = 0x03,  
   /// PULL_ACK packet type
   PULL_ACK = 0x04
 }
@@ -134,3 +136,11 @@ enum CyclicCodingRate : string
 
 ///Associative array that connects the types of 'd' language and types of json format
 immutable JSON_TYPE[string] dlangToJsonTypes;
+
+///The names of the structures that use packages 
+enum NamesOfStructures: string
+{
+  RXPK = "rxpk",
+  STAT = "stat",
+  TXPK = "txpk",
+}
