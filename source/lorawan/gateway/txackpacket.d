@@ -10,7 +10,6 @@ import lorawan.gateway.abstractpacket;
 import lorawan.gateway.lorawantypes;
 import std.conv;
 import std.json;
-//import std.typecons;
 
 /// Structure contains the downlink request error
 struct TxpkAck
