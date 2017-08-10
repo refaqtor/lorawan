@@ -533,7 +533,6 @@ class PushDataPacket : AbstractPacket
     
   private:
     ubyte[8] _gatewayID;
-    JSONValue _jsonObject;
     Rxpk[] _rxpkArray;
     Stat _statStruct;
     

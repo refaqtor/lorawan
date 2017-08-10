@@ -92,11 +92,11 @@ unittest
       given!"Arrays of bytes that represending the PULL_DATA packet uncorrectly"
       ({
           // incorrect packet type (forth byte should equal 2)
-          ubyte[] incorrectPullDataArray1 = [2, uniform!ubyte, uniform!ubyte, 0];
+          ubyte[] incorrectPullDataArray1 = [2, uniform!ubyte, uniform!ubyte, 0, 1, 2, 3, 4, 5, 6, 7, 8];
           // incorrect protocol version (first byte should equal 2)
-          ubyte[] incorrectPullDataArray2 = [1, uniform!ubyte, uniform!ubyte, 2];
+          ubyte[] incorrectPullDataArray2 = [1, uniform!ubyte, uniform!ubyte, 2, 1, 2, 3, 4, 5, 6, 7, 8];
           // incorrect array length (array length should equal 12)
-          ubyte[] incorrectPullDataArray3 = [1, 2];
+          ubyte[] incorrectPullDataArray3 = [2, 2];
           
           when!"Function 'parse' is called"
           ({
