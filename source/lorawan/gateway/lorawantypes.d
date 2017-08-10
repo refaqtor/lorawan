@@ -148,6 +148,7 @@ enum NamesOfStructures: string
   TXPK_ACK = "txpk_ack"
 }
 
+///Indication about success or type of failure that occured for downlink request
 enum DownlinkRequestError : string
 {
   NONE = "Packet has been programmed for downlink",

@@ -113,7 +113,7 @@ class TxAckParser : ParserInterface
         }
         
         string enumString = "";
-        ulong length = enumStringArray.length;
+        const ulong length = enumStringArray.length;
 
         for(int i = 0; i < length - 2; i++)
         {
