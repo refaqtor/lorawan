@@ -420,7 +420,7 @@ unittest
           // incorrect protocol version (first byte should equal 2)
           ubyte[] incorrectPushDataArray2 = [1, uniform!ubyte, uniform!ubyte, 0, 1, 2, 3, 4, 5, 6, 7, 8, 99];
           // incorrect array length (array length should be more than '12')
-          ubyte[] incorrectPushDataArray3 = [1, uniform!ubyte, uniform!ubyte, 0, 1, 2, 3, 4, 5, 6, 7, 8];
+          ubyte[] incorrectPushDataArray3 = [2, uniform!ubyte, uniform!ubyte, 0, 1, 2, 3, 4, 5, 6, 7, 8];
           
           //json object should not be null!
           string incorrectJsonString1 = ``;

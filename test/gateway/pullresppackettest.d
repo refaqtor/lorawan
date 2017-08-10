@@ -211,7 +211,7 @@ unittest
           // incorrect protocol version (first byte should equal 2)
           ubyte[] incorrectPullRespArray2 = [1, uniform!ubyte, uniform!ubyte, 3, 99];
           // incorrect array length (array length should be more than '4')
-          ubyte[] incorrectPullRespArray3 = [1, uniform!ubyte, uniform!ubyte, 3];
+          ubyte[] incorrectPullRespArray3 = [2, uniform!ubyte, uniform!ubyte, 3];
           
           //json object should not be null!
           string incorrectJsonString1 = ``;

@@ -87,7 +87,7 @@ unittest
           // incorrect protocol version (first byte should equal 2)
           ubyte[] incorrectPushAckArray2 = [1, uniform!ubyte, uniform!ubyte, 1];
           // incorrect array length (array length should equal 4)
-          ubyte[] incorrectPushAckArray3 = [1, 2];
+          ubyte[] incorrectPushAckArray3 = [2, 2];
           
           when!"Function 'parse' is called"
           ({
