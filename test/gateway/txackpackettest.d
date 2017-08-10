@@ -139,6 +139,11 @@ unittest
           string incorrectJsonString3 = `{"txpk_ack" : [1, 2, 3]}`;
           //field "error" of txpk_ack structure should have "STRING" type, not "ARRAY"!
           string incorrectJsonString4 = `{"txpk_ack" : {"error" : [1, 2, 3]}}`;
+          //field "error" of txpk_ack structure must belong to the DownlinkRequestError enum!
+          string incorrectJsonString5 = `{"txpk_ack" : {"error" : "hello"}}`;
+          //txpk_ack structure from json object should have field "error"!
+          string incorrectJsonString6 = `{"txpk_ack" : {"test" : 1}}`;
+
           
           ubyte[] getIncorrectTxAckArrayWithJson(string incorrectJsonString)
           {
@@ -153,6 +158,8 @@ unittest
           ubyte[] incorrectTxAckArrayWithJson2 = getIncorrectTxAckArrayWithJson(incorrectJsonString2);
           ubyte[] incorrectTxAckArrayWithJson3 = getIncorrectTxAckArrayWithJson(incorrectJsonString3);
           ubyte[] incorrectTxAckArrayWithJson4 = getIncorrectTxAckArrayWithJson(incorrectJsonString4);
+          ubyte[] incorrectTxAckArrayWithJson5 = getIncorrectTxAckArrayWithJson(incorrectJsonString5);
+          ubyte[] incorrectTxAckArrayWithJson6 = getIncorrectTxAckArrayWithJson(incorrectJsonString6);
           
           when!"Function 'parse' is called"
           ({
@@ -177,6 +184,14 @@ unittest
                   
                   (Lora.parse(incorrectTxAckArrayWithJson4)).shouldThrowWithMessage("field \"error\" of txpk_ack structure " ~
                     "from json object should have \"STRING\" type, but it have \"ARRAY\" type!");
+                  
+                  (Lora.parse(incorrectTxAckArrayWithJson5)).shouldThrowWithMessage("field \"error\" of txpk_ack " ~
+                    "structure from json object should have one of this values: \"NONE\", \"TOO_LATE\", \"TOO_EARLY\", " ~
+                    "\"COLLISION_PACKET\", \"COLLISION_BEACON\", \"TX_FREQ\", \"TX_POWER\" or \"GPS_UNLOCKED\", " ~
+                    "but it has the value \"hello\"!");
+                  
+                  (Lora.parse(incorrectTxAckArrayWithJson6)).shouldThrowWithMessage("txpk_ack structure from " ~
+                    "json object should have field \"error\"!");
               });
           });
       });

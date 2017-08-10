@@ -114,18 +114,13 @@ class TxAckParser : ParserInterface
         
         string enumString = "";
         ulong length = enumStringArray.length;
-        if(length >= 2) {  
-          for(int i = 0; i < length - 2; i++)
-          {
-            enumString ~= enumStringArray[i] ~ ", ";
-          }
-          enumString ~= enumStringArray[length - 2] ~ " or "
-          ~ enumStringArray[length - 1];
-        }
-        else
+
+        for(int i = 0; i < length - 2; i++)
         {
-          if(length == 1){ enumString ~= enumStringArray[0]; }
+          enumString ~= enumStringArray[i] ~ ", ";
         }
+        enumString ~= enumStringArray[length - 2] ~ " or "
+        ~ enumStringArray[length - 1];        
          
         DownlinkRequestError enumValue;
         try
@@ -136,7 +131,7 @@ class TxAckParser : ParserInterface
         {
           throw new LorawanException("field \"" ~ key ~ "\" of " ~ structureName ~
             " structure from json object should have one of this values: " ~ enumString ~
-            ", but it has the value \"" ~ to!string(valueFromJson) ~ "\"");
+            ", but it has the value \"" ~ to!string(valueFromJson) ~ "\"!");
         }
       }
       else
