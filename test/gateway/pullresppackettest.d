@@ -238,7 +238,7 @@ unittest
           
           when!"Function 'parse' is called"
           ({
-              auto pullRespDataPacket1 = Lora.parse(incorrectPullRespArray1);
+              auto pullRespPacket1 = Lora.parse(incorrectPullRespArray1);
               auto pullRespPacket2 = Lora.parse(incorrectPullRespArray2);
               auto pullRespPacket3 = Lora.parse(incorrectPullRespArray3);
               
