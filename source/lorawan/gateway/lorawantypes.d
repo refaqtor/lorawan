@@ -49,7 +49,9 @@ enum PacketType: ubyte
   /// PULL_RESP packet type
   PULL_RESP = 0x03,  
   /// PULL_ACK packet type
-  PULL_ACK = 0x04
+  PULL_ACK = 0x04,
+  /// TX_ACK packet type
+  TX_ACK = 0x05 
 }
 
 /// Enumeration of CRC statuses
@@ -143,4 +145,17 @@ enum NamesOfStructures: string
   RXPK = "rxpk",
   STAT = "stat",
   TXPK = "txpk",
+  TXPK_ACK = "txpk_ack"
+}
+
+enum DownlinkRequestError : string
+{
+  NONE = "Packet has been programmed for downlink",
+  TOO_LATE = "Rejected because it was already too late to program this packet for downlink",
+  TOO_EARLY = "Rejected because downlink packet timestamp is too much in advance",
+  COLLISION_PACKET = "Rejected because there was already a packet programmed in requested timeframe",
+  COLLISION_BEACON = "Rejected because there was already a beacon planned in requested timeframe",
+  TX_FREQ = "Rejected because requested frequency is not supported by TX RF chain",
+  TX_POWER = "Rejected because requested power is not supported by gateway",
+  GPS_UNLOCKED = "Rejected because GPS is unlocked, so GPS timestamp cannot be used"
 }

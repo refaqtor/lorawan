@@ -132,7 +132,7 @@ class PullRespParser : ParserInterface
   }
   
   private:
-    static Nullable!bool getBoolValueFromJsonByKey(string key, JSONValue jsonValue, NamesOfStructures structureName)
+    Nullable!bool getBoolValueFromJsonByKey(string key, JSONValue jsonValue, NamesOfStructures structureName)
     {
       Nullable!bool result;
        

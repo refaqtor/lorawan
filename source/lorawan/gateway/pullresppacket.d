@@ -7,11 +7,9 @@
 module lorawan.gateway.pullresppacket;
 
 import lorawan.gateway.abstractpacket;
-import lorawan.gateway.lorawanexception;
 import lorawan.gateway.lorawantypes;
 import lorawan.gateway.macpacket;
 import std.conv;
-import std.datetime;
 import std.json;
 import std.typecons;
 
