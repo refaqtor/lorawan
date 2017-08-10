@@ -147,9 +147,9 @@ unittest
       });
   });
     
-  scenario!("Transformation an array of bytes that represending the PUSH_DATA packet correctly into PUSH_DATA packet", ["gateway"])
+  scenario!("Transformation an array of bytes that represending the PULL_RESP packet correctly into PULL_RESP packet", ["gateway"])
   ({
-      given!"Array of bytes that represending the PUSH_DATA packet correctly"
+      given!"Array of bytes that represending the PULL_RESP packet correctly"
       ({
           PullRespPacket expected = new PullRespPacket;
           
@@ -186,7 +186,7 @@ unittest
           ({
               auto pullRespPacket = Lora.parse(pullRespArray);
               
-              then!"Get the correct PUSH_DATA packet"
+              then!"Get the correct PULL_RESP packet"
               ({
                   pullRespPacket.shouldNotBeNull();
                   pullRespPacket.shouldBeInstanceOf!PullRespPacket();
@@ -202,16 +202,16 @@ unittest
       });
   });
 
-  scenario!("Transformation an array of bytes that represending the PULL_RESP packet uncorrectly into PUSH_DATA packet", ["gateway"])
+  scenario!("Transformation an array of bytes that represending the PULL_RESP packet uncorrectly into PULL_RESP packet", ["gateway"])
   ({
       given!"Arrays of bytes that represending the PULL_RESP packet uncorrectly"
       ({  
           // incorrect packet type (forth byte should equal 3)
-          ubyte[] incorrectPushDataArray1 = [2, uniform!ubyte, uniform!ubyte, 1, 99];
+          ubyte[] incorrectPullRespArray1 = [2, uniform!ubyte, uniform!ubyte, 1, 99];
           // incorrect protocol version (first byte should equal 2)
-          ubyte[] incorrectPushDataArray2 = [1, uniform!ubyte, uniform!ubyte, 3, 99];
+          ubyte[] incorrectPullRespArray2 = [1, uniform!ubyte, uniform!ubyte, 3, 99];
           // incorrect array length (array length should be more than '4')
-          ubyte[] incorrectPushDataArray3 = [1, uniform!ubyte, uniform!ubyte, 3];
+          ubyte[] incorrectPullRespArray3 = [1, uniform!ubyte, uniform!ubyte, 3];
           
           //json object should not be null!
           string incorrectJsonString1 = ``;
@@ -227,8 +227,8 @@ unittest
             JSONValue incorrectJsonValue = parseJSON(incorrectJsonString);
             ubyte[] incorrectByteArray = cast(ubyte[]) toJSON(incorrectJsonValue);
             ubyte[] notJsonPart = cast(ubyte[]) [2, uniform!ubyte, uniform!ubyte, 3];
-            ubyte[] incorrectPushDataArrayWithJson = notJsonPart ~ incorrectByteArray;
-            return incorrectPushDataArrayWithJson;
+            ubyte[] incorrectPullRespArrayWithJson = notJsonPart ~ incorrectByteArray;
+            return incorrectPullRespArrayWithJson;
           }
                
           ubyte[] incorrectPullRespArrayWithJson1 = getIncorrectPullRespArrayWithJson(incorrectJsonString1);
@@ -238,15 +238,15 @@ unittest
           
           when!"Function 'parse' is called"
           ({
-              auto pushDataPacket1 = Lora.parse(incorrectPushDataArray1);
-              auto pushDataPacket2 = Lora.parse(incorrectPushDataArray2);
-              auto pushDataPacket3 = Lora.parse(incorrectPushDataArray3);
+              auto pullRespDataPacket1 = Lora.parse(incorrectPullRespArray1);
+              auto pullRespPacket2 = Lora.parse(incorrectPullRespArray2);
+              auto pullRespPacket3 = Lora.parse(incorrectPullRespArray3);
               
               then!"Get a return value different from the PULL_RESP packet or exception message"
               ({
-                  pushDataPacket1.shouldBeNull();
-                  pushDataPacket2.shouldBeNull();
-                  pushDataPacket3.shouldBeNull();
+                  pullRespPacket1.shouldBeNull();
+                  pullRespPacket2.shouldBeNull();
+                  pullRespPacket3.shouldBeNull();
                   
                   (Lora.parse(incorrectPullRespArrayWithJson1)).shouldThrowWithMessage("byte array should contain " ~ 
                     "json object, but recieved array contain only \"null\" json object!");

@@ -56,7 +56,9 @@ static Nullable!E getEnumValueFromJsonByKey(T, E)(string key, JSONValue jsonValu
     JSON_TYPE realJsonType = jsonValue[key].type;
     if(realJsonType != expectedJsonType)
     {
-      if(!(realJsonType == JSON_TYPE.INTEGER && expectedJsonType == JSON_TYPE.UINTEGER))
+      if(!((realJsonType == JSON_TYPE.INTEGER && expectedJsonType == JSON_TYPE.UINTEGER) ||
+      ((realJsonType == JSON_TYPE.INTEGER || realJsonType == JSON_TYPE.UINTEGER) &&
+      expectedJsonType == JSON_TYPE.FLOAT)))
       {
         throw new LorawanException("field \"" ~ key ~ "\" of " ~ structureName ~
           " structure from json object should have \"" ~ to!string(expectedJsonType) ~
