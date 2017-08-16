@@ -37,6 +37,7 @@ struct PHYPayload //TODO: add docs
     
     ubyte[4] getMic(){ return _mic; }
     void recalculateMic(ubyte[16] nwkSKey){ _mic = calculateMic(this, nwkSKey); }//TODO: add param nwkSKey
+    void setMic(ubyte[4] mic){ _mic = mic; }
     
   private:
     bool _isDownlink;
