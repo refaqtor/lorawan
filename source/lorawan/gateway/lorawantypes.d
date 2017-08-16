@@ -160,3 +160,33 @@ enum DownlinkRequestError : string
   TX_POWER = "Rejected because requested power is not supported by gateway",
   GPS_UNLOCKED = "Rejected because GPS is unlocked, so GPS timestamp cannot be used"
 }
+
+enum MACMessageType : ubyte
+{
+  JOIN_REQUEST = 0x00,
+  JOIN_ACCEPT = 0x01,
+  UNCONFIRMED_DATA_UP = 0x02,
+  UNCONFIRMED_DATA_DOWN = 0x03,
+  CONFIRMED_DATA_UP = 0x04,
+  CONFIRMED_DATA_DOWN = 0x05,
+  RFU = 0x06,
+  PROPRIETARY = 0x07
+}
+
+enum MACCommandCid : ubyte
+{
+  LINK_CHECK_REQ = 0x02,
+  LINK_CHECK_ANS = 0x02,
+  LINK_ADR_REQ = 0x03,
+  LINK_ADR_ANS = 0x03,
+  DUTY_CYCLE_REQ = 0x04,
+  DUTY_CYCLE_ANS = 0x04,
+  RX_PARAM_SETUP_REQ = 0x05,
+  RX_PARAM_SETUP_ANS = 0x05,
+  DEV_STATUS_REQ = 0x06,
+  DEV_STATUS_ANS = 0x06,
+  NEW_CHANNEL_REQ = 0x07,
+  NEW_CHANNEL_ANS = 0x07,
+  RX_TIMING_SETUP_REQ = 0x08,
+  RX_TIMING_SETUP_ANS = 0x08
+}
